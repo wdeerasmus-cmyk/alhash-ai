@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Finance AI — Alhash AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050d1f; --bg2: #0a1628; --bg3: #0f1f3d;
+      --gold: #f59e0b; --gold2: #fbbf24;
+      --blue: #2563eb; --blue2: #3b82f6;
+      --text: #e2e8f0; --muted: #94a3b8;
+      --border: rgba(255,255,255,0.08); --glass: rgba(255,255,255,0.04);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(5,13,31,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .logo span { color: var(--text); -webkit-text-fill-color: var(--text); font-weight: 300; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--blue); color: #fff !important;
+      padding: 0.5rem 1.2rem; border-radius: 8px;
+      font-weight: 600 !important; transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--blue2) !important; }
+
+    .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; padding-top: 72px; }
+    .chat-hero {
+      text-align: center; padding: 3rem 2rem 2rem;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245,158,11,0.08) 0%, transparent 70%);
+    }
+    .chat-hero .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+      color: var(--gold); padding: 0.4rem 1rem; border-radius: 50px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .chat-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+    .chat-hero h1 .accent {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .chat-hero p { color: var(--muted); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+
+    .chat-outer { flex: 1; display: flex; justify-content: center; padding: 1.5rem 1rem 2rem; }
+    .chat-container {
+      width: 100%; max-width: 780px;
+      display: flex; flex-direction: column;
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      backdrop-filter: blur(10px); min-height: 520px;
+    }
+    .chat-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), #f97316);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .chat-header-info h3 { font-size: 0.95rem; font-weight: 700; }
+    .chat-header-info p { font-size: 0.78rem; color: var(--muted); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-left: auto; box-shadow: 0 0 6px rgba(34,197,94,0.6); }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .msg { display: flex; gap: 0.6rem; max-width: 85%; }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg.ai { align-self: flex-start; }
+    .msg-avatar { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+    .msg.ai .msg-avatar { background: linear-gradient(135deg, var(--gold), #f97316); }
+    .msg.user .msg-avatar { background: var(--bg3); border: 1px solid var(--border); }
+    .msg-bubble { padding: 0.7rem 1rem; border-radius: 14px; font-size: 0.88rem; line-height: 1.6; }
+    .msg.ai .msg-bubble { background: var(--bg3); border: 1px solid var(--border); border-top-left-radius: 4px; }
+    .msg.user .msg-bubble { background: var(--blue); color: #fff; border-top-right-radius: 4px; }
+
+    .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 0.2rem 0; }
+    .typing-indicator span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-5px); opacity: 1; } }
+
+    .suggestions { padding: 0 1.25rem 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .suggestion-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); padding: 0.4rem 0.85rem;
+      border-radius: 50px; font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .suggestion-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(245,158,11,0.05); }
+
+    .chat-input-area { padding: 1rem 1.25rem; border-top: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .chat-input-row { display: flex; gap: 0.6rem; align-items: flex-end; }
+    .chat-input {
+      flex: 1; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); padding: 0.7rem 1rem;
+      border-radius: 12px; font-size: 0.88rem; font-family: inherit;
+      resize: none; outline: none; transition: border-color 0.2s;
+      min-height: 44px; max-height: 120px; line-height: 1.5;
+    }
+    .chat-input:focus { border-color: rgba(245,158,11,0.4); }
+    .chat-input::placeholder { color: var(--muted); }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold), #f97316);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .send-btn:hover { opacity: 0.9; transform: scale(1.05); }
+    .send-btn svg { width: 18px; height: 18px; fill: #fff; }
+    .input-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    @media (max-width: 640px) { nav ul { display: none; } .chat-hero { padding: 2rem 1rem 1.5rem; } .msg { max-width: 95%; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Alhash <span>AI</span></a>
+  <ul>
+    <li><a href="/#services">Services</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+  <div class="chat-hero">
+    <div class="badge">💛 Personal Finance</div>
+    <h1>Your <span class="accent">Finance Assistant</span></h1>
+    <p>Budgeting, savings, debt management, and building wealth — personalised guidance for your financial life.</p>
+  </div>
+
+  <div class="chat-outer">
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-avatar">💰</div>
+        <div class="chat-header-info">
+          <h3>Alhash Finance Assistant</h3>
+          <p>Personal Finance & Wealth Building</p>
+        </div>
+        <div class="status-dot"></div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg ai">
+          <div class="msg-avatar">💰</div>
+          <div class="msg-bubble">
+            Hi there! I'm your personal finance assistant — here to help you take control of your money, build savings, and make smarter financial decisions.<br><br>
+            Whether you're budgeting for the first time, paying down debt, or planning for the future, I've got you. What would you like to work on today?
+          </div>
+        </div>
+      </div>
+
+      <div class="suggestions" id="suggestions">
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">How do I start a budget?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">How much should I save?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Best way to pay off debt</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">What is an emergency fund?</button>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="Ask about budgeting, savings, investing..."
+            rows="1"
+            onkeydown="handleKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="send-btn" onclick="sendMessage()" aria-label="Send">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+        <p class="input-hint">For educational purposes only — not personalised financial advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Alhash Investments LLC-FZ · License #2541437.01 · Meydan Free Zone, Dubai, UAE</p>
+  <p style="margin-top:0.5rem;">
+    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> ·
+    <a href="https://alhash.ai">alhash.ai</a>
+  </p>
+</footer>
+
+<script>
+  const RESPONSES = [
+    {
+      triggers: ['budget','budgeting','track spending','where does my money go','50/30/20'],
+      reply: `Budgeting doesn't have to be complicated. The most popular framework is the **50/30/20 rule**:\n\n• **50%** — Needs (rent, food, utilities, transport)\n• **30%** — Wants (dining out, entertainment, subscriptions)\n• **20%** — Savings & debt repayment\n\n**How to start:**\n1. List your monthly take-home income\n2. Categorise last month's spending (bank statement works)\n3. Compare actual vs the 50/30/20 targets\n4. Identify the biggest gap and fix that first\n\nThe goal isn't perfection — it's awareness. Most people are shocked by how much they spend on "wants" once they actually look. What's your biggest spending category right now?`
+    },
+    {
+      triggers: ['save','savings','how much to save','saving rate','save money'],
+      reply: `A good savings target depends on your situation, but here are the benchmarks:\n\n**Minimum:** 10% of take-home income\n**Recommended:** 20% (the "20" in 50/30/20)\n**Aggressive wealth-building:** 30–50%\n\n**Priority order for savings:**\n1. Emergency fund first (3–6 months of expenses)\n2. High-interest debt payoff (anything above 7%)\n3. Retirement contributions (especially if employer matches)\n4. Medium-term goals (house deposit, car, travel)\n5. Long-term investing\n\n**Automation is the secret weapon.** Set up an automatic transfer on payday — before you can spend it. "Pay yourself first" is the single most effective savings habit.\n\nWhat's your current savings rate? I can help you find ways to increase it.`
+    },
+    {
+      triggers: ['debt','pay off','loan','credit card','interest','owe'],
+      reply: `There are two proven strategies for paying off debt:\n\n**1. Avalanche Method (mathematically optimal)**\n• Pay minimums on all debts\n• Put all extra money toward the highest interest rate debt first\n• Saves the most money in interest over time\n\n**2. Snowball Method (psychologically powerful)**\n• Pay minimums on all debts\n• Put all extra money toward the smallest balance first\n• Quick wins keep you motivated\n\n**My recommendation:** Use Avalanche if you're disciplined. Use Snowball if you need momentum to stay on track. The best method is the one you'll actually stick to.\n\n**Key rule:** Never carry a credit card balance if you can avoid it. 20–30% APR is wealth destruction.\n\nWhat debts are you working with? I can help you build a payoff plan.`
+    },
+    {
+      triggers: ['emergency fund','rainy day','safety net','3 months','6 months'],
+      reply: `An emergency fund is your financial foundation — without it, any unexpected expense becomes a debt spiral.\n\n**How much to save:**\n• Minimum: 1 month of essential expenses\n• Standard: 3 months of expenses\n• Recommended: 6 months (especially if self-employed or variable income)\n\n**What counts as "expenses":** Rent/mortgage, food, utilities, transport, insurance, minimum debt payments. Not your full lifestyle spend.\n\n**Where to keep it:**\n• High-yield savings account (not your main account — out of sight, out of mind)\n• Accessible within 1–2 days\n• NOT invested in stocks (you need it stable and liquid)\n\n**Building it:** Even $100/month gets you to 3 months of expenses in 1–2 years. Start small, automate it, don't touch it.\n\nDo you have an emergency fund started? I can help you calculate your target number.`
+    },
+    {
+      triggers: ['invest','investing','stocks','etf','index fund','portfolio','market'],
+      reply: `For most people, simple beats complex when it comes to investing. Here's the framework:\n\n**Step 1: Get the basics right first**\n• Emergency fund ✓\n• High-interest debt paid off ✓\n• Then invest\n\n**Step 2: Start with index funds**\nLow-cost, diversified, and historically outperform most active managers over 10+ years. Look for:\n• S&P 500 index funds (US market)\n• Global index funds (broader diversification)\n• Expense ratio below 0.2%\n\n**Step 3: Time in market > timing the market**\nInvest consistently (monthly), don't try to time dips. Dollar-cost averaging removes emotion from the equation.\n\n**Step 4: Don't check it daily**\nLong-term investing is boring by design. That's the point.\n\nAre you just starting out, or do you already have some investments you want to optimise?`
+    },
+    {
+      triggers: ['retirement','pension','401k','ira','long term','future'],
+      reply: `Retirement planning is the most powerful wealth-building tool available — and most people start too late.\n\n**The magic of compound interest:**\n• $500/month from age 25 → ~$1.7M by 65 (at 7% avg return)\n• $500/month from age 35 → ~$850K by 65\n• Starting 10 years earlier nearly doubles your outcome\n\n**Priority order:**\n1. Contribute enough to get any employer match (free money)\n2. Max out tax-advantaged accounts (pension, ISA, 401k, IRA — depends on your country)\n3. Invest in taxable accounts after that\n\n**Rule of thumb:** Save 15% of gross income for retirement. If you're starting late, increase that to 20–25%.\n\n**Dubai/UAE note:** No mandatory pension for expats, so self-directed investing is essential. Consider a global brokerage with low-cost index funds.\n\nHow old are you and what's your current retirement savings situation?`
+    },
+    {
+      triggers: ['house','property','mortgage','buy a home','down payment','rent vs buy'],
+      reply: `The rent vs buy decision is one of the most personal in personal finance. Here's how to think about it:\n\n**Buy when:**\n• You plan to stay 5+ years (transaction costs need time to amortise)\n• You have 20% down payment (avoids PMI/mortgage insurance)\n• Monthly mortgage ≤ 28% of gross income\n• You have 3–6 months emergency fund AFTER the down payment\n\n**Rent when:**\n• You might move in the next 3–5 years\n• The price-to-rent ratio is high (buying is expensive relative to renting)\n• You'd be house-poor (mortgage strains your budget)\n\n**The hidden costs of buying:** Maintenance (budget 1–2% of home value/year), insurance, property taxes, transaction costs (3–6% to buy, 6–10% to sell).\n\n**Dubai context:** High rental yields (5–8%) and no property tax make the calculation different here. Happy to dig into specifics if you're looking at the UAE market.`
+    },
+    {
+      triggers: ['tax','taxes','tax efficient','tax saving','deduction'],
+      reply: `Tax efficiency is one of the highest-leverage financial moves available — legally keeping more of what you earn.\n\n**Key principles:**\n\n**1. Use tax-advantaged accounts first**\n• Pension/retirement contributions (pre-tax or tax-free growth)\n• ISAs (UK), 401k/IRA (US), or equivalent in your country\n\n**2. Understand your marginal rate**\nEvery extra dollar/dirham earned is taxed at your marginal rate. Knowing this helps you decide between salary, dividends, or other income structures.\n\n**3. UAE advantage**\nIf you're based in Dubai — no personal income tax is a massive wealth-building advantage. The key is investing the difference rather than lifestyle inflating.\n\n**4. Capital gains timing**\nIn countries with CGT, holding assets >1 year often qualifies for lower rates.\n\nWhat country are you based in? I can give you more specific guidance.`
+    }
+  ];
+
+  const FALLBACKS = [
+    "Great question! Personal finance is deeply personal — the right answer depends on your income, expenses, goals, and timeline. Could you share a bit more about your situation so I can give you tailored guidance?",
+    "That's something a lot of people wonder about. The short answer is: start with the basics (budget, emergency fund, debt), then build from there. What stage are you at right now?",
+    "Good thinking to be asking this. Financial wellbeing comes down to a few core habits done consistently. What's the biggest financial challenge you're facing right now?",
+    "I love that you're thinking about this. The best financial decisions are the ones you actually follow through on. Tell me more about your situation and I'll give you something concrete to work with.",
+    "This is one of those questions where the answer really depends on your numbers. What does your current income and monthly spending look like roughly?"
+  ];
+
+  let isTyping = false;
+
+  function getResponse(input) {
+    const lower = input.toLowerCase();
+    for (const item of RESPONSES) {
+      if (item.triggers.some(t => lower.includes(t))) return item.reply;
+    }
+    return FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)];
+  }
+
+  function formatMessage(text) {
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  }
+
+  function appendMessage(role, text) {
+    const messages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    const avatar = role === 'ai' ? '💰' : '👤';
+    div.innerHTML = `<div class="msg-avatar">${avatar}</div><div class="msg-bubble">${formatMessage(text)}</div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showTyping() {
+    const messages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg ai'; div.id = 'typingIndicator';
+    div.innerHTML = `<div class="msg-avatar">💰</div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+  function hideSuggestions() { const s = document.getElementById('suggestions'); if (s) s.style.display = 'none'; }
+
+  function sendMessage() {
+    if (isTyping) return;
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    hideSuggestions();
+    appendMessage('user', text);
+    input.value = ''; input.style.height = 'auto';
+    isTyping = true; showTyping();
+    setTimeout(() => { removeTyping(); appendMessage('ai', getResponse(text)); isTyping = false; }, 900 + Math.random() * 800);
+  }
+
+  function sendSuggestion(btn) { document.getElementById('chatInput').value = btn.textContent; sendMessage(); }
+  function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+  function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+</script>
+<script>
+(function() {
+  const WORKER_URL = 'https://openai-proxy.alhash-ai.workers.dev';
+  const SERVICE = 'finance';
+
+  const messageHistory = [];
+
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (!chatMessages || !chatInput || !sendBtn) {
+    console.error('Alhash CFO: Chat elements not found.');
+    return;
+  }
+
+  function appendMessage(role, content) {
+    const wrapper = document.createElement('div');
+    wrapper.className = role === 'user' ? 'message user-message' : 'message ai-message';
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    bubble.innerHTML = content.replace(/\n/g, '<br>');
+    wrapper.appendChild(bubble);
+    chatMessages.appendChild(wrapper);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return bubble;
+  }
+
+  async function sendMessage() {
+    const userText = chatInput.value.trim();
+    if (!userText) return;
+
+    chatInput.value = '';
+    sendBtn.disabled = true;
+    chatInput.disabled = true;
+
+    appendMessage('user', userText);
+    messageHistory.push({ role: 'user', content: userText });
+
+    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">▋</span>');
+
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userText,
+          service: SERVICE,
+          history: messageHistory.slice(0, -1)
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        aiBubble.innerHTML = `<em>Error: ${err.error || 'Request failed.'}</em>`;
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      aiBubble.innerHTML = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            try {
+              const data = JSON.parse(line.slice(6));
+              const delta = data.choices?.[0]?.delta?.content || '';
+              fullText += delta;
+              aiBubble.innerHTML = fullText.replace(/\n/g, '<br>');
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch {}
+          }
+        }
+      }
+
+      messageHistory.push({ role: 'assistant', content: fullText });
+
+    } catch (err) {
+      aiBubble.innerHTML = `<em>Error: ${err.message}</em>`;
+    } finally {
+      sendBtn.disabled = false;
+      chatInput.disabled = false;
+      chatInput.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+})();
+</script>
+</body>
+</html>

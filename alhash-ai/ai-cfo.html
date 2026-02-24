@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI CFO — Alhash AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050d1f; --bg2: #0a1628; --bg3: #0f1f3d;
+      --gold: #f59e0b; --gold2: #fbbf24;
+      --blue: #2563eb; --blue2: #3b82f6;
+      --text: #e2e8f0; --muted: #94a3b8;
+      --border: rgba(255,255,255,0.08); --glass: rgba(255,255,255,0.04);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(5,13,31,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .logo span { color: var(--text); -webkit-text-fill-color: var(--text); font-weight: 300; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--blue); color: #fff !important;
+      padding: 0.5rem 1.2rem; border-radius: 8px;
+      font-weight: 600 !important; transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--blue2) !important; }
+
+    /* PAGE LAYOUT */
+    .page-wrapper {
+      display: flex; flex-direction: column;
+      min-height: 100vh; padding-top: 72px;
+    }
+    .chat-hero {
+      text-align: center; padding: 3rem 2rem 2rem;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(37,99,235,0.12) 0%, transparent 70%);
+    }
+    .chat-hero .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+      color: var(--gold); padding: 0.4rem 1rem; border-radius: 50px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .chat-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+    .chat-hero h1 .accent {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .chat-hero p { color: var(--muted); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+
+    /* CHAT CONTAINER */
+    .chat-outer {
+      flex: 1; display: flex; justify-content: center;
+      padding: 1.5rem 1rem 2rem;
+    }
+    .chat-container {
+      width: 100%; max-width: 780px;
+      display: flex; flex-direction: column;
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      backdrop-filter: blur(10px);
+      min-height: 520px;
+    }
+    .chat-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue), var(--gold));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .chat-header-info h3 { font-size: 0.95rem; font-weight: 700; }
+    .chat-header-info p { font-size: 0.78rem; color: var(--muted); }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e; margin-left: auto;
+      box-shadow: 0 0 6px rgba(34,197,94,0.6);
+    }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1.25rem;
+      display: flex; flex-direction: column; gap: 1rem;
+      scroll-behavior: smooth;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .msg { display: flex; gap: 0.6rem; max-width: 85%; }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg.ai { align-self: flex-start; }
+
+    .msg-avatar {
+      width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+    }
+    .msg.ai .msg-avatar { background: linear-gradient(135deg, var(--blue), var(--gold)); }
+    .msg.user .msg-avatar { background: var(--bg3); border: 1px solid var(--border); }
+
+    .msg-bubble {
+      padding: 0.7rem 1rem; border-radius: 14px;
+      font-size: 0.88rem; line-height: 1.6;
+    }
+    .msg.ai .msg-bubble {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-top-left-radius: 4px;
+    }
+    .msg.user .msg-bubble {
+      background: var(--blue); color: #fff;
+      border-top-right-radius: 4px;
+    }
+
+    /* TYPING INDICATOR */
+    .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 0.2rem 0; }
+    .typing-indicator span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--muted); animation: bounce 1.2s infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    /* SUGGESTED PROMPTS */
+    .suggestions {
+      padding: 0 1.25rem 1rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .suggestion-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); padding: 0.4rem 0.85rem;
+      border-radius: 50px; font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .suggestion-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(245,158,11,0.05); }
+
+    /* INPUT */
+    .chat-input-area {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .chat-input-row {
+      display: flex; gap: 0.6rem; align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); padding: 0.7rem 1rem;
+      border-radius: 12px; font-size: 0.88rem; font-family: inherit;
+      resize: none; outline: none; transition: border-color 0.2s;
+      min-height: 44px; max-height: 120px; line-height: 1.5;
+    }
+    .chat-input:focus { border-color: rgba(37,99,235,0.5); }
+    .chat-input::placeholder { color: var(--muted); }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--blue); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .send-btn:hover { background: var(--blue2); transform: scale(1.05); }
+    .send-btn svg { width: 18px; height: 18px; fill: #fff; }
+    .input-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem; text-align: center;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      .chat-hero { padding: 2rem 1rem 1.5rem; }
+      .msg { max-width: 95%; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Alhash <span>AI</span></a>
+  <ul>
+    <li><a href="/#services">Services</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+  <div class="chat-hero">
+    <div class="badge">⚡ AI-Powered</div>
+    <h1>Your <span class="accent">AI CFO</span></h1>
+    <p>Corporate finance intelligence — runway, liquidity, burn rate, and strategic capital decisions.</p>
+  </div>
+
+  <div class="chat-outer">
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-avatar">💼</div>
+        <div class="chat-header-info">
+          <h3>Alhash AI CFO</h3>
+          <p>Corporate Finance Intelligence</p>
+        </div>
+        <div class="status-dot"></div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg ai">
+          <div class="msg-avatar">💼</div>
+          <div class="msg-bubble">
+            Hello. I'm your AI CFO — built for founders, finance teams, and operators who need sharp financial thinking without the overhead.<br><br>
+            I can help with burn rate analysis, runway modelling, liquidity planning, fundraising strategy, and capital allocation. What's on your financial agenda today?
+          </div>
+        </div>
+      </div>
+
+      <div class="suggestions" id="suggestions">
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">What's a healthy burn rate?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">How do I extend my runway?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">When should I raise a Series A?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Explain working capital</button>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="Ask your AI CFO anything..."
+            rows="1"
+            onkeydown="handleKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="send-btn" onclick="sendMessage()" aria-label="Send">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+        <p class="input-hint">AI responses are for informational purposes only — not financial advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Alhash Investments LLC-FZ · License #2541437.01 · Meydan Free Zone, Dubai, UAE</p>
+  <p style="margin-top:0.5rem;">
+    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> ·
+    <a href="https://alhash.ai">alhash.ai</a>
+  </p>
+</footer>
+
+<script>
+  const CONTEXT = 'cfo';
+
+  const RESPONSES = {
+    cfo: [
+      {
+        triggers: ['burn','burn rate','spending','monthly spend'],
+        reply: `Burn rate is the monthly net cash outflow from operations. There are two types:\n\n• **Gross burn** — total monthly expenses\n• **Net burn** — expenses minus revenue\n\nA healthy net burn depends on your stage. Pre-revenue seed companies typically run $30K–$150K/month. Series A companies $200K–$800K/month. The key metric is your **burn multiple**: net burn ÷ net new ARR. Below 1.5x is strong; above 2x warrants attention.\n\nWhat's your current monthly revenue and expense run rate? I can give you a more precise read.`
+      },
+      {
+        triggers: ['runway','months left','cash left','how long'],
+        reply: `Runway = cash on hand ÷ net monthly burn.\n\nThe standard target is **18–24 months** of runway at all times. Here's why:\n\n• Fundraising takes 3–6 months minimum\n• You want 6+ months of buffer post-close\n• Market conditions can freeze capital markets overnight\n\n**Extending runway levers:**\n1. Reduce headcount (largest cost driver for most startups)\n2. Renegotiate vendor contracts\n3. Accelerate revenue collection / shorten payment terms\n4. Pause non-critical hiring\n5. Convert fixed costs to variable where possible\n\nWhat's your current cash position and monthly burn? I'll calculate your exact runway.`
+      },
+      {
+        triggers: ['series a','raise','fundraise','funding','investor','vc'],
+        reply: `The right time to raise a Series A is when you can demonstrate **repeatable, scalable growth** — not just traction.\n\nTypical Series A benchmarks in 2025:\n• $1M–$3M ARR (SaaS) or strong GMV/revenue equivalent\n• 2–3x YoY growth\n• Improving unit economics (LTV:CAC > 3:1)\n• Clear path to $10M ARR\n• 12–18 months runway post-raise\n\n**Timing tip:** Start conversations 6–9 months before you need the money. Raise from a position of strength, not desperation. The best rounds happen when you don't urgently need them.\n\nAre you currently preparing for a raise? I can help you model the right ask size.`
+      },
+      {
+        triggers: ['working capital','current assets','current liabilities','liquidity'],
+        reply: `Working capital = Current Assets − Current Liabilities.\n\nIt measures your short-term operational liquidity — can you cover obligations due within 12 months?\n\n**Key ratios:**\n• **Current ratio** (CA/CL): >1.5 is healthy; <1 is a warning sign\n• **Quick ratio** ((CA - Inventory)/CL): >1 is ideal\n• **Cash conversion cycle**: how fast you turn operations into cash\n\nFor startups, working capital management is often about **receivables velocity** — getting paid faster than you pay out. Net 30 terms on invoices with early payment discounts (2/10 net 30) can meaningfully improve your position.\n\nWant me to walk through a working capital optimisation framework for your business model?`
+      },
+      {
+        triggers: ['unit economics','ltv','cac','customer acquisition','lifetime value'],
+        reply: `Unit economics are the foundation of every scalable business. The core metrics:\n\n• **CAC** (Customer Acquisition Cost) = Total sales & marketing spend ÷ new customers acquired\n• **LTV** (Lifetime Value) = ARPU × Gross Margin % × Average Customer Lifespan\n• **LTV:CAC ratio** — the north star metric\n  - <1x: You're destroying value\n  - 1–3x: Marginal, needs improvement\n  - 3x+: Healthy and fundable\n  - 5x+: Strong pricing power or underinvesting in growth\n\n**Payback period** (CAC ÷ monthly gross profit per customer) should ideally be under 18 months for SaaS.\n\nShare your numbers and I'll calculate your exact ratios.`
+      },
+      {
+        triggers: ['cash flow','cashflow','p&l','profit','loss','income statement'],
+        reply: `Cash flow and profit are not the same thing — this distinction trips up many founders.\n\n**P&L (Accrual):** Records revenue when earned, expenses when incurred. Can show profit while you're cash-negative.\n\n**Cash Flow Statement:** Tracks actual cash in/out. Three sections:\n1. **Operating** — core business cash generation\n2. **Investing** — capex, acquisitions\n3. **Financing** — debt, equity raises\n\nFor early-stage companies, **operating cash flow** is the most critical signal. Negative operating cash flow is normal early on — but the trend matters. Are you burning less per dollar of revenue over time?\n\nWant me to help you build a 13-week cash flow forecast?`
+      },
+      {
+        triggers: ['valuation','worth','how much is my company','pre-money','post-money'],
+        reply: `Startup valuation is part science, part negotiation. Common methodologies:\n\n**Revenue multiples (most common for SaaS):**\n• Early stage: 5–15x ARR\n• Growth stage: 10–25x ARR\n• Depends heavily on growth rate, margins, and market conditions\n\n**Pre-money vs Post-money:**\n• Pre-money = valuation before new investment\n• Post-money = pre-money + new investment\n• Your ownership % = your shares ÷ total post-money shares\n\n**2025 context:** Multiples have compressed from 2021 peaks. Investors are prioritising efficiency (Rule of 40: growth rate + profit margin ≥ 40%) over pure growth.\n\nWhat stage are you at and what's your current ARR? I can give you a realistic valuation range.`
+      },
+      {
+        triggers: ['budget','forecast','financial model','projections'],
+        reply: `A solid financial model has three interconnected components:\n\n**1. Revenue model**\n• Bottom-up: build from sales capacity, conversion rates, deal sizes\n• Avoid top-down ("we'll capture 1% of a $10B market")\n\n**2. Cost structure**\n• Fixed vs variable costs\n• Headcount plan (usually 60–70% of opex)\n• COGS and gross margin targets\n\n**3. Cash flow bridge**\n• Ties P&L to actual cash timing\n• Accounts for payment terms, capex, debt service\n\n**Best practice:** Build three scenarios (base, upside, downside). Your downside should assume 30–40% revenue miss. Can you survive it? If not, adjust your cost structure now.\n\nWant help structuring a specific section of your model?`
+      }
+    ]
+  };
+
+  const FALLBACKS = {
+    cfo: [
+      "That's a nuanced question. In corporate finance, context is everything — the right answer depends on your stage, business model, and capital structure. Could you share a bit more detail so I can give you a precise analysis?",
+      "Good question. From a CFO perspective, I'd approach this by first understanding your current financial position, then stress-testing assumptions. What specific numbers are you working with?",
+      "This touches on several financial levers simultaneously. The short answer is: it depends on your burn multiple and unit economics. Walk me through your current metrics and I'll give you a concrete recommendation.",
+      "In my experience advising finance teams, this question usually comes down to timing and capital efficiency. What's driving the question — a board meeting, a fundraise, or an operational decision?",
+      "Solid question. The CFO lens here is: what's the risk-adjusted return on this decision? Let me know more about your situation and I'll model it out for you."
+    ]
+  };
+
+  let isTyping = false;
+
+  function getResponse(input) {
+    const lower = input.toLowerCase();
+    const pool = RESPONSES[CONTEXT] || [];
+    for (const item of pool) {
+      if (item.triggers.some(t => lower.includes(t))) {
+        return item.reply;
+      }
+    }
+    const fallbacks = FALLBACKS[CONTEXT];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  }
+
+  function formatMessage(text) {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+  }
+
+  function appendMessage(role, text) {
+    const messages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    const avatar = role === 'ai' ? '💼' : '👤';
+    div.innerHTML = `
+      <div class="msg-avatar">${avatar}</div>
+      <div class="msg-bubble">${formatMessage(text)}</div>
+    `;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showTyping() {
+    const messages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg ai';
+    div.id = 'typingIndicator';
+    div.innerHTML = `
+      <div class="msg-avatar">💼</div>
+      <div class="msg-bubble">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeTyping() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
+  function hideSuggestions() {
+    const s = document.getElementById('suggestions');
+    if (s) s.style.display = 'none';
+  }
+
+  function sendMessage() {
+    if (isTyping) return;
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    hideSuggestions();
+    appendMessage('user', text);
+    input.value = '';
+    input.style.height = 'auto';
+
+    isTyping = true;
+    showTyping();
+
+    const delay = 900 + Math.random() * 800;
+    setTimeout(() => {
+      removeTyping();
+      const reply = getResponse(text);
+      appendMessage('ai', reply);
+      isTyping = false;
+    }, delay);
+  }
+
+  function sendSuggestion(btn) {
+    const text = btn.textContent;
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+</script>
+<script>
+(function() {
+  const WORKER_URL = 'https://openai-proxy.alhash-ai.workers.dev';
+  const SERVICE = 'cfo';
+
+  const messageHistory = [];
+
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (!chatMessages || !chatInput || !sendBtn) {
+    console.error('Alhash CFO: Chat elements not found.');
+    return;
+  }
+
+  function appendMessage(role, content) {
+    const wrapper = document.createElement('div');
+    wrapper.className = role === 'user' ? 'message user-message' : 'message ai-message';
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    bubble.innerHTML = content.replace(/\n/g, '<br>');
+    wrapper.appendChild(bubble);
+    chatMessages.appendChild(wrapper);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return bubble;
+  }
+
+  async function sendMessage() {
+    const userText = chatInput.value.trim();
+    if (!userText) return;
+
+    chatInput.value = '';
+    sendBtn.disabled = true;
+    chatInput.disabled = true;
+
+    appendMessage('user', userText);
+    messageHistory.push({ role: 'user', content: userText });
+
+    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">▋</span>');
+
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userText,
+          service: SERVICE,
+          history: messageHistory.slice(0, -1)
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        aiBubble.innerHTML = `<em>Error: ${err.error || 'Request failed.'}</em>`;
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      aiBubble.innerHTML = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            try {
+              const data = JSON.parse(line.slice(6));
+              const delta = data.choices?.[0]?.delta?.content || '';
+              fullText += delta;
+              aiBubble.innerHTML = fullText.replace(/\n/g, '<br>');
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch {}
+          }
+        }
+      }
+
+      messageHistory.push({ role: 'assistant', content: fullText });
+
+    } catch (err) {
+      aiBubble.innerHTML = `<em>Error: ${err.message}</em>`;
+    } finally {
+      sendBtn.disabled = false;
+      chatInput.disabled = false;
+      chatInput.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+})();
+</script>
+</body>
+</html>

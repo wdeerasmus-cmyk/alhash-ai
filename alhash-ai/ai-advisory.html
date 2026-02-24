@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Advisory — Alhash AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050d1f; --bg2: #0a1628; --bg3: #0f1f3d;
+      --gold: #f59e0b; --gold2: #fbbf24;
+      --blue: #2563eb; --blue2: #3b82f6;
+      --text: #e2e8f0; --muted: #94a3b8;
+      --border: rgba(255,255,255,0.08); --glass: rgba(255,255,255,0.04);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(5,13,31,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    .logo span { color: var(--text); -webkit-text-fill-color: var(--text); font-weight: 300; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--blue); color: #fff !important;
+      padding: 0.5rem 1.2rem; border-radius: 8px;
+      font-weight: 600 !important; transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--blue2) !important; }
+
+    .page-wrapper { display: flex; flex-direction: column; min-height: 100vh; padding-top: 72px; }
+    .chat-hero {
+      text-align: center; padding: 3rem 2rem 2rem;
+      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(37,99,235,0.1) 0%, transparent 60%),
+                  radial-gradient(ellipse 40% 30% at 80% 10%, rgba(245,158,11,0.06) 0%, transparent 60%);
+    }
+    .chat-hero .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.3);
+      color: var(--blue2); padding: 0.4rem 1rem; border-radius: 50px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .chat-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+    .chat-hero h1 .accent {
+      background: linear-gradient(135deg, var(--blue2), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .chat-hero p { color: var(--muted); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+
+    .chat-outer { flex: 1; display: flex; justify-content: center; padding: 1.5rem 1rem 2rem; }
+    .chat-container {
+      width: 100%; max-width: 780px;
+      display: flex; flex-direction: column;
+      background: var(--glass); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      backdrop-filter: blur(10px); min-height: 520px;
+    }
+    .chat-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .chat-header-info h3 { font-size: 0.95rem; font-weight: 700; }
+    .chat-header-info p { font-size: 0.78rem; color: var(--muted); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; margin-left: auto; box-shadow: 0 0 6px rgba(34,197,94,0.6); }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .msg { display: flex; gap: 0.6rem; max-width: 85%; }
+    .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg.ai { align-self: flex-start; }
+    .msg-avatar { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+    .msg.ai .msg-avatar { background: linear-gradient(135deg, var(--blue), var(--blue2)); }
+    .msg.user .msg-avatar { background: var(--bg3); border: 1px solid var(--border); }
+    .msg-bubble { padding: 0.7rem 1rem; border-radius: 14px; font-size: 0.88rem; line-height: 1.6; }
+    .msg.ai .msg-bubble { background: var(--bg3); border: 1px solid var(--border); border-top-left-radius: 4px; }
+    .msg.user .msg-bubble { background: var(--blue); color: #fff; border-top-right-radius: 4px; }
+
+    .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 0.2rem 0; }
+    .typing-indicator span { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: bounce 1.2s infinite; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-5px); opacity: 1; } }
+
+    .suggestions { padding: 0 1.25rem 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .suggestion-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); padding: 0.4rem 0.85rem;
+      border-radius: 50px; font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .suggestion-btn:hover { border-color: var(--blue2); color: var(--blue2); background: rgba(37,99,235,0.05); }
+
+    .chat-input-area { padding: 1rem 1.25rem; border-top: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .chat-input-row { display: flex; gap: 0.6rem; align-items: flex-end; }
+    .chat-input {
+      flex: 1; background: var(--bg3); border: 1px solid var(--border);
+      color: var(--text); padding: 0.7rem 1rem;
+      border-radius: 12px; font-size: 0.88rem; font-family: inherit;
+      resize: none; outline: none; transition: border-color 0.2s;
+      min-height: 44px; max-height: 120px; line-height: 1.5;
+    }
+    .chat-input:focus { border-color: rgba(37,99,235,0.5); }
+    .chat-input::placeholder { color: var(--muted); }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--blue); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .send-btn:hover { background: var(--blue2); transform: scale(1.05); }
+    .send-btn svg { width: 18px; height: 18px; fill: #fff; }
+    .input-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.5rem; text-align: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.85rem; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    @media (max-width: 640px) { nav ul { display: none; } .chat-hero { padding: 2rem 1rem 1.5rem; } .msg { max-width: 95%; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Alhash <span>AI</span></a>
+  <ul>
+    <li><a href="/#services">Services</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrapper">
+  <div class="chat-hero">
+    <div class="badge">🔵 Strategic Advisory</div>
+    <h1>Your <span class="accent">AI Advisory</span></h1>
+    <p>Market intelligence, AI integration strategy, and investment insights — built for forward-thinking businesses.</p>
+  </div>
+
+  <div class="chat-outer">
+    <div class="chat-container">
+      <div class="chat-header">
+        <div class="chat-avatar">🧠</div>
+        <div class="chat-header-info">
+          <h3>Alhash AI Advisor</h3>
+          <p>Strategy, Markets & AI Integration</p>
+        </div>
+        <div class="status-dot"></div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg ai">
+          <div class="msg-avatar">🧠</div>
+          <div class="msg-bubble">
+            Welcome. I'm your AI strategic advisor — combining market intelligence, technology trends, and investment strategy to help you make better decisions faster.<br><br>
+            I specialise in AI integration for financial services, emerging market opportunities, and strategic capital allocation. What are you working through today?
+          </div>
+        </div>
+      </div>
+
+      <div class="suggestions" id="suggestions">
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">How do I integrate AI into my business?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">What are the top investment trends?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">Tell me about the Dubai fintech scene</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">How do I evaluate a startup investment?</button>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="Ask about strategy, markets, AI trends..."
+            rows="1"
+            onkeydown="handleKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="send-btn" onclick="sendMessage()" aria-label="Send">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+        <p class="input-hint">Strategic insights for informational purposes — not investment advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Alhash Investments LLC-FZ · License #2541437.01 · Meydan Free Zone, Dubai, UAE</p>
+  <p style="margin-top:0.5rem;">
+    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> ·
+    <a href="https://alhash.ai">alhash.ai</a>
+  </p>
+</footer>
+
+<script>
+  const RESPONSES = [
+    {
+      triggers: ['integrate ai','ai integration','implement ai','ai in my business','adopt ai','use ai'],
+      reply: `AI integration is the highest-leverage strategic move available to most businesses right now. Here's how to approach it:\n\n**Phase 1: Identify high-value use cases (Week 1–2)**\nDon't start with technology — start with pain points. Ask: where do we spend the most time on repetitive, rule-based tasks? Common wins:\n• Document processing & data extraction\n• Customer support (first-line triage)\n• Financial reporting & reconciliation\n• Lead scoring & CRM enrichment\n\n**Phase 2: Build vs Buy decision**\n• For commodity tasks → use existing tools (ChatGPT, Claude, Copilot)\n• For competitive differentiation → build custom on top of APIs\n• For regulated industries → prioritise on-premise or private cloud\n\n**Phase 3: Pilot → Measure → Scale**\nStart with one use case, measure ROI rigorously, then expand. The companies winning with AI aren't doing 20 things — they're doing 2–3 things exceptionally well.\n\nWhat industry are you in? I can give you sector-specific recommendations.`
+    },
+    {
+      triggers: ['investment trend','market trend','where to invest','2025','2026','opportunities'],
+      reply: `The most compelling investment themes for 2025–2026:\n\n**1. AI Infrastructure**\nThe "picks and shovels" play — data centres, power infrastructure, cooling systems, and semiconductor supply chains. Demand is structurally outpacing supply.\n\n**2. GCC & MENA Growth**\nDubai, Riyadh, and Abu Dhabi are attracting unprecedented capital flows. Real estate, fintech, and logistics are the primary beneficiaries. Vision 2030 is a multi-decade tailwind.\n\n**3. Private Credit**\nWith banks pulling back from certain lending segments, private credit is filling the gap at attractive yields (10–14% in some segments).\n\n**4. Climate Tech**\nNot just solar/wind — grid modernisation, carbon capture, and sustainable agriculture are attracting serious institutional capital.\n\n**5. Emerging Market Fintech**\nUnderbanked populations + mobile-first infrastructure = massive TAM. Southeast Asia, Africa, and MENA are the frontier.\n\nWhich of these aligns with your investment mandate? I can go deeper on any of them.`
+    },
+    {
+      triggers: ['dubai','uae','mena','middle east','fintech','gulf'],
+      reply: `Dubai has quietly become one of the world's most important fintech and investment hubs. Here's the landscape:\n\n**Why Dubai works:**\n• 0% personal and corporate income tax (for most businesses)\n• DIFC and ADGM — world-class regulatory frameworks modelled on UK/US law\n• Strategic timezone (between Asia and Europe)\n• Political stability and rule of law\n• Massive sovereign wealth capital (ADIA, Mubadala, ADQ)\n\n**Fintech ecosystem:**\n• 700+ fintech companies in the UAE\n• DIFC FinTech Hive — the region's leading accelerator\n• Strong regulatory sandbox for innovation\n• Growing demand for Islamic finance tech (massive underserved market)\n\n**Key sectors attracting capital:**\n• Payments & remittances (large expat population)\n• Wealth management & robo-advisory\n• Trade finance & supply chain\n• Real estate tokenisation\n\n**Alhash AI's position:** We're at the intersection of AI and financial services in this market — advising companies on how to leverage both the regulatory environment and the technology opportunity.\n\nAre you looking to enter the UAE market, or already operating here?`
+    },
+    {
+      triggers: ['startup','evaluate','due diligence','invest in','angel','venture','vc'],
+      reply: `Evaluating a startup investment requires a structured framework. Here's how I approach it:\n\n**The 5 Dimensions:**\n\n**1. Team (40% of the decision)**\n• Have they done this before (domain expertise)?\n• Can they recruit and retain talent?\n• How do they handle adversity?\n• Reference checks — what do former colleagues say?\n\n**2. Market (20%)**\n• Is the TAM genuinely large (>$1B)?\n• Is it growing or shrinking?\n• Are they going after a real problem or a vitamin?\n\n**3. Product (20%)**\n• Does it work? Have you used it?\n• What's the moat (network effects, data, switching costs, IP)?\n• How defensible is it in 3 years?\n\n**4. Traction (15%)**\n• Revenue growth rate (MoM)\n• Retention / churn\n• NPS or qualitative customer love\n\n**5. Deal terms (5%)**\n• Valuation vs comparable rounds\n• Pro-rata rights, information rights, board composition\n\n**Red flags:** Founders who can't explain why they'll win, markets that require behaviour change, and cap tables with too many early investors.\n\nDo you have a specific deal you're evaluating? I can help you structure the analysis.`
+    },
+    {
+      triggers: ['ai trend','future of ai','llm','large language model','gpt','generative ai','machine learning'],
+      reply: `The AI landscape is moving faster than any technology shift in history. Here's what matters strategically:\n\n**Where we are (2025–2026):**\n• LLMs have crossed the threshold from "impressive demo" to "production-grade tool"\n• Agentic AI (AI that takes actions, not just generates text) is the next frontier\n• Multimodal models (text + image + audio + video) are collapsing the cost of content creation\n• On-device AI is reducing latency and privacy concerns\n\n**The strategic implications:**\n\n**For incumbents:** The threat isn't AI replacing your product — it's a startup using AI to deliver your product at 10x lower cost. The moat is now data and distribution, not software.\n\n**For startups:** The window to build AI-native companies is open but closing. The advantage goes to those who move now, before incumbents catch up.\n\n**For investors:** The infrastructure layer (compute, data, tooling) is more defensible than the application layer. But application-layer companies with proprietary data are the exception.\n\n**The underrated opportunity:** AI for regulated industries (finance, healthcare, legal) — where the compliance complexity creates a moat that pure-tech players can't easily cross.\n\nWhat's your specific interest in AI — building, investing, or integrating?`
+    },
+    {
+      triggers: ['strategy','competitive advantage','moat','differentiation','positioning'],
+      reply: `Sustainable competitive advantage in 2025 comes from one of five sources:\n\n**1. Network Effects**\nThe product gets more valuable as more people use it. The strongest moat in tech. Examples: marketplaces, social platforms, payment networks.\n\n**2. Proprietary Data**\nData that competitors can't replicate — especially valuable in the AI era. The company that trains on the best data wins.\n\n**3. Switching Costs**\nMaking it painful to leave. Deep integrations, workflow dependencies, data lock-in. Enterprise software is built on this.\n\n**4. Cost Advantages**\nStructural cost advantages from scale, unique assets, or process innovation. Hard to build, very durable once established.\n\n**5. Brand / Trust**\nEspecially in financial services — trust is the product. Regulatory credibility, track record, and reputation compound over time.\n\n**The AI disruption question:** Which of these moats does AI erode vs strengthen? Network effects and proprietary data get stronger. Pure software switching costs get weaker (AI can migrate data). Brand/trust becomes more important as AI commoditises execution.\n\nWhat's your current competitive position? I can help you identify where to invest to strengthen your moat.`
+    },
+    {
+      triggers: ['portfolio','asset allocation','diversification','risk','hedge'],
+      reply: `Portfolio construction is about balancing return potential against risk tolerance and liquidity needs. Here's a framework:\n\n**The three dimensions of allocation:**\n\n**1. Asset class diversification**\n• Public equities (liquid, volatile)\n• Private equity/venture (illiquid, high return potential)\n• Fixed income/credit (income, lower volatility)\n• Real assets (inflation hedge, income)\n• Alternatives (uncorrelated returns)\n\n**2. Geographic diversification**\n• Don't be 100% in one market\n• Emerging markets offer growth premium but with higher volatility\n• Currency exposure is a hidden risk many investors underestimate\n\n**3. Time horizon matching**\n• Short-term needs → liquid, low-risk\n• Long-term goals → can tolerate illiquidity for return premium\n\n**2025 context:**\n• Higher-for-longer rates have made fixed income attractive again\n• Private credit is offering equity-like returns with debt-like seniority\n• GCC real estate continues to outperform most global markets\n\nWhat's your current portfolio composition and investment horizon? I can help you identify gaps or concentration risks.`
+    },
+    {
+      triggers: ['regulation','compliance','regulatory','license','fsra','dfsa','sec'],
+      reply: `Regulatory strategy is increasingly a competitive advantage, not just a compliance burden. Here's the landscape:\n\n**UAE Regulatory Framework:**\n• **DFSA (DIFC):** UK-modelled, internationally recognised, preferred for institutional and cross-border business\n• **FSRA (ADGM):** Strong for asset management, family offices, and fintech\n• **SCA:** Onshore UAE regulator for securities and commodities\n• **CBUAE:** Central Bank — payments, banking, insurance\n\n**The strategic play:**\nDIFC and ADGM offer regulatory sandboxes — you can test innovative products with real customers before full licensing. This is a significant advantage over most global jurisdictions.\n\n**For fintech companies:**\nThe UAE has one of the most progressive regulatory environments for digital assets, payments, and AI-driven financial services. The VARA (Virtual Assets Regulatory Authority) framework is a global benchmark.\n\n**Alhash AI's approach:**\nWe help clients navigate the regulatory landscape as part of their market entry and product strategy — not as an afterthought.\n\nAre you looking at a specific license type or regulatory jurisdiction? I can give you a more targeted breakdown.`
+    }
+  ];
+
+  const FALLBACKS = [
+    "That's a sharp question. From a strategic advisory perspective, the answer depends heavily on your market position, capital structure, and time horizon. Could you give me more context on your situation?",
+    "Good thinking. The most valuable strategic insights come from connecting macro trends to your specific competitive position. What industry and geography are you focused on?",
+    "This is exactly the kind of question where having the right framework matters more than the right answer. Let me ask: what decision are you trying to make? That'll help me give you something actionable.",
+    "Interesting angle. In my experience advising across fintech and investment, this question usually comes down to timing and conviction. What's driving the question right now?",
+    "The strategic lens here is: what's the asymmetric opportunity? Where can you get outsized return for a given level of risk? Tell me more about what you're working on and I'll give you a sharper take."
+  ];
+
+  let isTyping = false;
+
+  function getResponse(input) {
+    const lower = input.toLowerCase();
+    for (const item of RESPONSES) {
+      if (item.triggers.some(t => lower.includes(t))) return item.reply;
+    }
+    return FALLBACKS[Math.floor(Math.random() * FALLBACKS.length)];
+  }
+
+  function formatMessage(text) {
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  }
+
+  function appendMessage(role, text) {
+    const messages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    const avatar = role === 'ai' ? '🧠' : '👤';
+    div.innerHTML = `<div class="msg-avatar">${avatar}</div><div class="msg-bubble">${formatMessage(text)}</div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showTyping() {
+    const messages = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg ai'; div.id = 'typingIndicator';
+    div.innerHTML = `<div class="msg-avatar">🧠</div><div class="msg-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeTyping() { const el = document.getElementById('typingIndicator'); if (el) el.remove(); }
+  function hideSuggestions() { const s = document.getElementById('suggestions'); if (s) s.style.display = 'none'; }
+
+  function sendMessage() {
+    if (isTyping) return;
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    hideSuggestions();
+    appendMessage('user', text);
+    input.value = ''; input.style.height = 'auto';
+    isTyping = true; showTyping();
+    setTimeout(() => { removeTyping(); appendMessage('ai', getResponse(text)); isTyping = false; }, 900 + Math.random() * 800);
+  }
+
+  function sendSuggestion(btn) { document.getElementById('chatInput').value = btn.textContent; sendMessage(); }
+  function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+  function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+</script>
+<script>
+(function() {
+  const WORKER_URL = 'https://openai-proxy.alhash-ai.workers.dev';
+  const SERVICE = 'advisory';
+
+  const messageHistory = [];
+
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  if (!chatMessages || !chatInput || !sendBtn) {
+    console.error('Alhash CFO: Chat elements not found.');
+    return;
+  }
+
+  function appendMessage(role, content) {
+    const wrapper = document.createElement('div');
+    wrapper.className = role === 'user' ? 'message user-message' : 'message ai-message';
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    bubble.innerHTML = content.replace(/\n/g, '<br>');
+    wrapper.appendChild(bubble);
+    chatMessages.appendChild(wrapper);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return bubble;
+  }
+
+  async function sendMessage() {
+    const userText = chatInput.value.trim();
+    if (!userText) return;
+
+    chatInput.value = '';
+    sendBtn.disabled = true;
+    chatInput.disabled = true;
+
+    appendMessage('user', userText);
+    messageHistory.push({ role: 'user', content: userText });
+
+    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">▋</span>');
+
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userText,
+          service: SERVICE,
+          history: messageHistory.slice(0, -1)
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        aiBubble.innerHTML = `<em>Error: ${err.error || 'Request failed.'}</em>`;
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      aiBubble.innerHTML = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+            try {
+              const data = JSON.parse(line.slice(6));
+              const delta = data.choices?.[0]?.delta?.content || '';
+              fullText += delta;
+              aiBubble.innerHTML = fullText.replace(/\n/g, '<br>');
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch {}
+          }
+        }
+      }
+
+      messageHistory.push({ role: 'assistant', content: fullText });
+
+    } catch (err) {
+      aiBubble.innerHTML = `<em>Error: ${err.message}</em>`;
+    } finally {
+      sendBtn.disabled = false;
+      chatInput.disabled = false;
+      chatInput.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+})();
+</script>
+</body>
+</html>
