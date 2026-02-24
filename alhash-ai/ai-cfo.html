@@ -427,9 +427,8 @@
 </script>
 <script>
 (function() {
-  const WORKER_URL = 'https://openai-proxy.alhash-ai.workers.dev';
+  const WORKER_URL = '/.netlify/functions/openai-proxy';
   const SERVICE = 'cfo';
-
   const messageHistory = [];
 
   const chatMessages = document.getElementById('chatMessages');
