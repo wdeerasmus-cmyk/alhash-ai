@@ -577,25 +577,32 @@
     return div;
   }
 
+  let chatHistory = [];
+
   async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
     input.value = '';
     send.disabled = true;
     addMsg(text, 'user');
+    chatHistory.push({ role: 'user', content: text });
     const typing = addMsg('Thinking...', 'bot typing');
     try {
       const res = await fetch('/.netlify/functions/openai-proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) })
       });
       const data = await res.json();
       typing.remove();
-      addMsg(data.reply || data.error || 'Sorry, something went wrong.', 'bot');
+      const reply = data.reply || data.error || 'Sorry, something went wrong.';
+      addMsg(reply, 'bot');
+      chatHistory.push({ role: 'assistant', content: reply });
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
     } catch (e) {
       typing.remove();
       addMsg('Connection error. Please try again.', 'bot');
+      chatHistory.pop();
     }
     send.disabled = false;
     input.focus();
