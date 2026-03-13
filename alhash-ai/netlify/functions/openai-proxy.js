@@ -1,113 +1,130 @@
-exports.handler = async function(event) {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Content-Type": "application/json"
-  };
+const https = require("https");
 
+exports.handler = async function (event, context) {
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers, body: "" };
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+      },
+      body: "",
+    };
   }
 
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers, body: "Method Not Allowed" };
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const { message, history } = JSON.parse(event.body || "{}");
-  if (!message) return { statusCode: 400, headers, body: JSON.stringify({ error: "No message provided" }) };
+  const SYSTEM_PROMPT = `You are the Alhash AI CFO — a sharp, direct corporate finance expert for founders, operators, and finance teams.
 
+RULES (non-negotiable):
+1. ANSWER THE EXACT QUESTION FIRST. Always lead with a direct answer to what was asked before any context or expansion.
+2. CALCULATE WITH PROVIDED NUMBERS. If the user gives you specific numbers, use them immediately. Never ask them to share numbers they already gave you.
+3. NEVER ASK COUNTER-QUESTIONS. Do not ask the user to share their numbers, situation, or context. Answer with what you have.
+4. STAY ON TOPIC. Answer the specific question asked. Do not drift to a different financial topic.
+5. BE PRECISE. When math is involved, show the formula and the calculation. Do not give vague ranges when exact answers are possible.
+
+FINANCIAL EXPERTISE:
+- Burn rate, runway, zero cash date calculations
+- Working capital, liquidity, cash flow analysis
+- Unit economics: CAC, LTV, payback period, LTV:CAC ratio
+- Capital structure: equity vs debt, venture debt, convertible notes, SAFEs
+- Fundraising strategy: seed, Series A/B, bridge rounds
+- Financial modeling, scenario analysis, sensitivity analysis
+- Marketplace economics, SaaS metrics, fintech-specific KPIs
+
+RESPONSE FORMAT:
+- Lead with the direct answer or calculation
+- Show your work for any math (formula → numbers → result)
+- Add 2-3 sentences of strategic context after the answer
+- Keep responses concise and actionable
+- Use bullet points for comparisons, numbered steps for processes
+
+EXAMPLE — correct behavior:
+User: "If my CAC is $150 and LTV is $600, what is the maximum I should spend on marketing to maintain a 12-month payback period?"
+Answer: "Your CAC of $150 already implies a 12-month payback period if your monthly gross profit per customer is $12.50 ($150 ÷ 12 months). With LTV:CAC of 4x ($600 ÷ $150), your unit economics are healthy. To maintain 12-month payback, keep CAC at or below $150 — meaning your total marketing spend should not exceed $150 per new customer acquired. If you want to improve payback, focus on increasing monthly gross margin per customer rather than cutting CAC."`;
+
+  let body;
+  try {
+    body = JSON.parse(event.body);
+  } catch (e) {
+    return { statusCode: 400, body: "Invalid JSON" };
+  }
+
+  const messages = body.messages || [];
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return { statusCode: 500, headers, body: JSON.stringify({ error: "API key not configured" }) };
 
-  const systemPrompt = `You are Alhash AI's intelligent assistant — a knowledgeable, friendly representative of Alhash Investments LLC-FZ, a Dubai-based AI-powered investment advisory and personal finance platform headquartered in Dubai's Meydan Free Zone (License #2541437.01, Activity Code 6499.02).
-
-Your role is to answer questions directly and helpfully about Alhash AI, its products, and its services. You speak as a company representative — confident, warm, and informative.
-
-CRITICAL RULES — FOLLOW THESE WITHOUT EXCEPTION:
-- NEVER ask the user a question back. Ever. Not even clarifying questions.
-- NEVER say "What would you like to know?" or "How can I help you?" or "What are you interested in?" or any variation.
-- ALWAYS give a direct, complete answer immediately.
-- If the user's message is vague, assume the most common interpretation and answer it fully.
-- End every response with a clear statement or offer, never a question.
-
-ABOUT ALHASH AI:
-- Full legal name: Alhash Investments LLC-FZ
-- Location: Meydan Free Zone, Dubai, UAE
-- License: #2541437.01 — fully licensed and compliant in the UAE financial ecosystem
-- Mission: Democratise access to intelligent financial tools for UAE residents, expats, and entrepreneurs
-- Vision: Every person and business in the UAE should have access to the same quality of financial intelligence as the world's top investment firms
-- We are AI-first — every product is built on real AI infrastructure, not just a chatbot on top of a spreadsheet
-
-OUR 5 PRODUCTS:
-1. AI Investment Advisory — Institutional-grade portfolio analysis powered by AI. Personalised investment strategies, real-time market signals, and risk-adjusted recommendations tailored to UAE and global markets. Available now at alhash.ai/ai-advisory.html
-2. Personal Finance App — AI-powered financial co-pilot. Track spending, automate savings, and get intelligent insights to build wealth. Available now at alhash.ai/personal-finance.html
-3. AI CFO for SMEs — Give your business the financial intelligence of a Fortune 500 CFO at a fraction of the cost. Cash flow forecasting, expense optimisation, and strategic financial planning powered by AI. Available now at alhash.ai/ai-cfo.html
-4. Crypto Platform — Trade, manage, and grow your crypto portfolio with AI-driven signals and automated strategies. Built for the UAE market with full regulatory compliance. Coming soon — users can join the waitlist.
-5. Copy Trading — Automatically mirror the trades of top-performing investors. AI curates and ranks the best traders. Coming soon — users can join the waitlist.
-
-WHY ALHASH AI:
-- UAE-Licensed & Compliant: Fully licensed under Meydan Free Zone. Full legal transparency in the UAE financial ecosystem.
-- AI-First, Not AI-Washed: Genuine machine learning, real-time data, actionable intelligence — not just a chatbot on a spreadsheet.
-- Built for Expats & Entrepreneurs: We understand multi-currency needs, cross-border investing, and SME cash flow complexity unique to UAE residents.
-- One Platform, Five Solutions: Everything under one roof with a unified AI layer that learns your financial behaviour over time.
-- 5+ AI-Powered Services, 24/7 AI Monitoring, Multi-Currency (AED) support.
-
-CONTACT & DEMOS:
-- Email: hello@alhashinvestments.com
-- Website: alhash.ai
-- Book a demo: Available through the website
-
-PRICING:
-- Personal Finance App: Free to start, premium tiers available
-- AI Investment Advisory: Subscription-based, pricing on request
-- AI CFO for SMEs: Monthly subscription, pricing based on company size
-- Crypto Platform & Copy Trading: Coming soon, join waitlist for early access pricing
-
-RESPONSE STYLE:
-- Be direct and confident. Give the answer first, context second.
-- Keep responses concise — 2-4 sentences for simple questions, up to 6 for complex ones.
-- Use bullet points for lists of features or products.
-- Always end with a statement like "You can learn more at alhash.ai" or "Reach us at hello@alhashinvestments.com" — never a question.
-- If asked something outside your knowledge, say "For the most up-to-date information on that, reach us directly at hello@alhashinvestments.com" — do not ask what they want to know.`;
-
-  const messages = [
-    { role: "system", content: systemPrompt }
-  ];
-
-  // Add conversation history (capped at 20 messages to manage token usage)
-  if (history && Array.isArray(history)) {
-    const recentHistory = history.slice(-20);
-    messages.push(...recentHistory);
+  if (!apiKey) {
+    return { statusCode: 500, body: "API key not configured" };
   }
 
-  messages.push({ role: "user", content: message });
-
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: messages,
-      temperature: 0.3,
-      max_tokens: 500
-    })
+  const payload = JSON.stringify({
+    model: "gpt-4o",
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messages,
+    ],
+    max_tokens: 1000,
+    temperature: 0.3,
+    stream: false,
   });
 
-  if (!response.ok) {
-    const error = await response.text();
-    return { statusCode: 500, headers, body: JSON.stringify({ error: "OpenAI API error", details: error }) };
-  }
+  return new Promise((resolve) => {
+    const options = {
+      hostname: "api.openai.com",
+      path: "/v1/chat/completions",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Length": Buffer.byteLength(payload),
+      },
+    };
 
-  const data = await response.json();
-  const reply = data.choices[0].message.content;
+    const req = https.request(options, (res) => {
+      let data = "";
+      res.on("data", (chunk) => { data += chunk; });
+      res.on("end", () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) {
+            resolve({
+              statusCode: 500,
+              headers: { "Access-Control-Allow-Origin": "*" },
+              body: JSON.stringify({ error: parsed.error.message }),
+            });
+            return;
+          }
+          const content = parsed.choices?.[0]?.message?.content || "";
+          resolve({
+            statusCode: 200,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({ content }),
+          });
+        } catch (e) {
+          resolve({
+            statusCode: 500,
+            headers: { "Access-Control-Allow-Origin": "*" },
+            body: JSON.stringify({ error: "Failed to parse OpenAI response" }),
+          });
+        }
+      });
+    });
 
-  return {
-    statusCode: 200,
-    headers,
-    body: JSON.stringify({ reply })
-  };
+    req.on("error", (e) => {
+      resolve({
+        statusCode: 500,
+        headers: { "Access-Control-Allow-Origin": "*" },
+        body: JSON.stringify({ error: e.message }),
+      });
+    });
+
+    req.write(payload);
+    req.end();
+  });
 };
