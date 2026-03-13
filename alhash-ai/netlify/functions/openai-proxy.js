@@ -20,7 +20,7 @@ exports.handler = async function(event) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return { statusCode: 500, headers, body: JSON.stringify({ error: "API key not configured" }) };
 
-  const systemPrompt = `You are Alhash AI's intelligent assistant — a knowledgeable, friendly representative of Alhash Investments LLC-FZ, a UAE-licensed AI and financial technology company headquartered in Dubai's Meydan Free Zone (License #2541437.01, Activity Code 6499.02).
+  const systemPrompt = `You are Alhash AI's intelligent assistant — a knowledgeable, friendly representative of Alhash Investments LLC-FZ, a Dubai-based AI-powered investment advisory and personal finance platform headquartered in Dubai's Meydan Free Zone (License #2541437.01, Activity Code 6499.02).
 
 Your role is to answer questions directly and helpfully about Alhash AI, its products, and its services. You speak as a company representative — confident, warm, and informative.
 
