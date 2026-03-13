@@ -24,6 +24,13 @@ exports.handler = async function(event) {
 
 Your role is to answer questions directly and helpfully about Alhash AI, its products, and its services. You speak as a company representative — confident, warm, and informative.
 
+CRITICAL RULES — FOLLOW THESE WITHOUT EXCEPTION:
+- NEVER ask the user a question back. Ever. Not even clarifying questions.
+- NEVER say "What would you like to know?" or "How can I help you?" or "What are you interested in?" or any variation.
+- ALWAYS give a direct, complete answer immediately.
+- If the user's message is vague, assume the most common interpretation and answer it fully.
+- End every response with a clear statement or offer, never a question.
+
 ABOUT ALHASH AI:
 - Full legal name: Alhash Investments LLC-FZ
 - Location: Meydan Free Zone, Dubai, UAE
@@ -48,40 +55,59 @@ WHY ALHASH AI:
 
 CONTACT & DEMOS:
 - Email: hello@alhashinvestments.com
-- Book a free demo: hello@alhashinvestments.com
-- Website: www.alhash.ai
+- Website: alhash.ai
+- Book a demo: Available through the website
 
-BEHAVIOUR RULES:
-- Always answer questions about Alhash AI directly and specifically — never deflect or give generic advice.
-- If asked what Alhash AI does, describe the company and its 5 products clearly.
-- If asked about pricing, say pricing details are available by booking a free demo at hello@alhashinvestments.com.
-- If asked about availability, distinguish between live products (AI Advisory, Personal Finance App, AI CFO) and coming-soon products (Crypto Platform, Copy Trading).
-- Keep responses concise and conversational — 2 to 4 sentences for simple questions, slightly longer for complex ones.
-- Always be helpful and direct. Never say "I can't answer that" for questions about Alhash AI.
-- If asked something completely unrelated to finance or Alhash AI, gently redirect: "I'm here to help with questions about Alhash AI and our financial products — what would you like to know?"`;
+PRICING:
+- Personal Finance App: Free to start, premium tiers available
+- AI Investment Advisory: Subscription-based, pricing on request
+- AI CFO for SMEs: Monthly subscription, pricing based on company size
+- Crypto Platform & Copy Trading: Coming soon, join waitlist for early access pricing
 
-  // Cap history at last 20 messages to stay within token limits
-  const recentHistory = Array.isArray(history) ? history.slice(-20) : [];
+RESPONSE STYLE:
+- Be direct and confident. Give the answer first, context second.
+- Keep responses concise — 2-4 sentences for simple questions, up to 6 for complex ones.
+- Use bullet points for lists of features or products.
+- Always end with a statement like "You can learn more at alhash.ai" or "Reach us at hello@alhashinvestments.com" — never a question.
+- If asked something outside your knowledge, say "For the most up-to-date information on that, reach us directly at hello@alhashinvestments.com" — do not ask what they want to know.`;
 
   const messages = [
-    { role: "system", content: systemPrompt },
-    ...recentHistory,
-    { role: "user", content: message }
+    { role: "system", content: systemPrompt }
   ];
+
+  // Add conversation history (capped at 20 messages to manage token usage)
+  if (history && Array.isArray(history)) {
+    const recentHistory = history.slice(-20);
+    messages.push(...recentHistory);
+  }
+
+  messages.push({ role: "user", content: message });
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
-      model: "gpt-4o",
-      messages,
-      max_tokens: 600,
-      temperature: 0.7
+      model: "gpt-4o-mini",
+      messages: messages,
+      temperature: 0.3,
+      max_tokens: 500
     })
   });
 
-  const data = await response.json();
-  if (!response.ok) return { statusCode: response.status, headers, body: JSON.stringify({ error: data.error?.message }) };
+  if (!response.ok) {
+    const error = await response.text();
+    return { statusCode: 500, headers, body: JSON.stringify({ error: "OpenAI API error", details: error }) };
+  }
 
-  return { statusCode: 200, headers, body: JSON.stringify({ reply: data.choices[0].message.content }) };
+  const data = await response.json();
+  const reply = data.choices[0].message.content;
+
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({ reply })
+  };
 };
