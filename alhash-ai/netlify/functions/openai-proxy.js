@@ -14,7 +14,7 @@ exports.handler = async function(event) {
     return { statusCode: 405, headers, body: "Method Not Allowed" };
   }
 
-  const { message } = JSON.parse(event.body || "{}");
+  const { message, history } = JSON.parse(event.body || "{}");
   if (!message) return { statusCode: 400, headers, body: JSON.stringify({ error: "No message provided" }) };
 
   const apiKey = process.env.OPENAI_API_KEY;
@@ -60,15 +60,21 @@ BEHAVIOUR RULES:
 - Always be helpful and direct. Never say "I can't answer that" for questions about Alhash AI.
 - If asked something completely unrelated to finance or Alhash AI, gently redirect: "I'm here to help with questions about Alhash AI and our financial products — what would you like to know?"`;
 
+  // Cap history at last 20 messages to stay within token limits
+  const recentHistory = Array.isArray(history) ? history.slice(-20) : [];
+
+  const messages = [
+    { role: "system", content: systemPrompt },
+    ...recentHistory,
+    { role: "user", content: message }
+  ];
+
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message }
-      ],
+      messages,
       max_tokens: 600,
       temperature: 0.7
     })
