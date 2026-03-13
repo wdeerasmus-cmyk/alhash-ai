@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI CFO — Alhash AI</title>
+  <title>AI CFO â Alhash AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -213,15 +213,15 @@
 
 <div class="page-wrapper">
   <div class="chat-hero">
-    <div class="badge">⚡ AI-Powered</div>
+    <div class="badge">â¡ AI-Powered</div>
     <h1>Your <span class="accent">AI CFO</span></h1>
-    <p>Corporate finance intelligence — runway, liquidity, burn rate, and strategic capital decisions.</p>
+    <p>Corporate finance intelligence â runway, liquidity, burn rate, and strategic capital decisions.</p>
   </div>
 
   <div class="chat-outer">
     <div class="chat-container">
       <div class="chat-header">
-        <div class="chat-avatar">💼</div>
+        <div class="chat-avatar">ð¼</div>
         <div class="chat-header-info">
           <h3>Alhash AI CFO</h3>
           <p>Corporate Finance Intelligence</p>
@@ -231,9 +231,9 @@
 
       <div class="chat-messages" id="chatMessages">
         <div class="msg ai">
-          <div class="msg-avatar">💼</div>
+          <div class="msg-avatar">ð¼</div>
           <div class="msg-bubble">
-            Hello. I'm your AI CFO — built for founders, finance teams, and operators who need sharp financial thinking without the overhead.<br><br>
+            Hello. I'm your AI CFO â built for founders, finance teams, and operators who need sharp financial thinking without the overhead.<br><br>
             I can help with burn rate analysis, runway modelling, liquidity planning, fundraising strategy, and capital allocation. What's on your financial agenda today?
           </div>
         </div>
@@ -260,171 +260,21 @@
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
-        <p class="input-hint">AI responses are for informational purposes only — not financial advice.</p>
+        <p class="input-hint">AI responses are for informational purposes only â not financial advice.</p>
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  <p>© 2026 Alhash Investments LLC-FZ · License #2541437.01 · Meydan Free Zone, Dubai, UAE</p>
+  <p>Â© 2026 Alhash Investments LLC-FZ Â· License #2541437.01 Â· Meydan Free Zone, Dubai, UAE</p>
   <p style="margin-top:0.5rem;">
-    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> ·
+    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> Â·
     <a href="https://alhash.ai">alhash.ai</a>
   </p>
 </footer>
 
-<script>
-  const CONTEXT = 'cfo';
 
-  const RESPONSES = {
-    cfo: [
-      {
-        triggers: ['burn','burn rate','spending','monthly spend'],
-        reply: `Burn rate is the monthly net cash outflow from operations. There are two types:\n\n• **Gross burn** — total monthly expenses\n• **Net burn** — expenses minus revenue\n\nA healthy net burn depends on your stage. Pre-revenue seed companies typically run $30K–$150K/month. Series A companies $200K–$800K/month. The key metric is your **burn multiple**: net burn ÷ net new ARR. Below 1.5x is strong; above 2x warrants attention.\n\nWhat's your current monthly revenue and expense run rate? I can give you a more precise read.`
-      },
-      {
-        triggers: ['runway','months left','cash left','how long'],
-        reply: `Runway = cash on hand ÷ net monthly burn.\n\nThe standard target is **18–24 months** of runway at all times. Here's why:\n\n• Fundraising takes 3–6 months minimum\n• You want 6+ months of buffer post-close\n• Market conditions can freeze capital markets overnight\n\n**Extending runway levers:**\n1. Reduce headcount (largest cost driver for most startups)\n2. Renegotiate vendor contracts\n3. Accelerate revenue collection / shorten payment terms\n4. Pause non-critical hiring\n5. Convert fixed costs to variable where possible\n\nWhat's your current cash position and monthly burn? I'll calculate your exact runway.`
-      },
-      {
-        triggers: ['series a','raise','fundraise','funding','investor','vc'],
-        reply: `The right time to raise a Series A is when you can demonstrate **repeatable, scalable growth** — not just traction.\n\nTypical Series A benchmarks in 2025:\n• $1M–$3M ARR (SaaS) or strong GMV/revenue equivalent\n• 2–3x YoY growth\n• Improving unit economics (LTV:CAC > 3:1)\n• Clear path to $10M ARR\n• 12–18 months runway post-raise\n\n**Timing tip:** Start conversations 6–9 months before you need the money. Raise from a position of strength, not desperation. The best rounds happen when you don't urgently need them.\n\nAre you currently preparing for a raise? I can help you model the right ask size.`
-      },
-      {
-        triggers: ['working capital','current assets','current liabilities','liquidity'],
-        reply: `Working capital = Current Assets − Current Liabilities.\n\nIt measures your short-term operational liquidity — can you cover obligations due within 12 months?\n\n**Key ratios:**\n• **Current ratio** (CA/CL): >1.5 is healthy; <1 is a warning sign\n• **Quick ratio** ((CA - Inventory)/CL): >1 is ideal\n• **Cash conversion cycle**: how fast you turn operations into cash\n\nFor startups, working capital management is often about **receivables velocity** — getting paid faster than you pay out. Net 30 terms on invoices with early payment discounts (2/10 net 30) can meaningfully improve your position.\n\nWant me to walk through a working capital optimisation framework for your business model?`
-      },
-      {
-        triggers: ['unit economics','ltv','cac','customer acquisition','lifetime value'],
-        reply: `Unit economics are the foundation of every scalable business. The core metrics:\n\n• **CAC** (Customer Acquisition Cost) = Total sales & marketing spend ÷ new customers acquired\n• **LTV** (Lifetime Value) = ARPU × Gross Margin % × Average Customer Lifespan\n• **LTV:CAC ratio** — the north star metric\n  - <1x: You're destroying value\n  - 1–3x: Marginal, needs improvement\n  - 3x+: Healthy and fundable\n  - 5x+: Strong pricing power or underinvesting in growth\n\n**Payback period** (CAC ÷ monthly gross profit per customer) should ideally be under 18 months for SaaS.\n\nShare your numbers and I'll calculate your exact ratios.`
-      },
-      {
-        triggers: ['cash flow','cashflow','p&l','profit','loss','income statement'],
-        reply: `Cash flow and profit are not the same thing — this distinction trips up many founders.\n\n**P&L (Accrual):** Records revenue when earned, expenses when incurred. Can show profit while you're cash-negative.\n\n**Cash Flow Statement:** Tracks actual cash in/out. Three sections:\n1. **Operating** — core business cash generation\n2. **Investing** — capex, acquisitions\n3. **Financing** — debt, equity raises\n\nFor early-stage companies, **operating cash flow** is the most critical signal. Negative operating cash flow is normal early on — but the trend matters. Are you burning less per dollar of revenue over time?\n\nWant me to help you build a 13-week cash flow forecast?`
-      },
-      {
-        triggers: ['valuation','worth','how much is my company','pre-money','post-money'],
-        reply: `Startup valuation is part science, part negotiation. Common methodologies:\n\n**Revenue multiples (most common for SaaS):**\n• Early stage: 5–15x ARR\n• Growth stage: 10–25x ARR\n• Depends heavily on growth rate, margins, and market conditions\n\n**Pre-money vs Post-money:**\n• Pre-money = valuation before new investment\n• Post-money = pre-money + new investment\n• Your ownership % = your shares ÷ total post-money shares\n\n**2025 context:** Multiples have compressed from 2021 peaks. Investors are prioritising efficiency (Rule of 40: growth rate + profit margin ≥ 40%) over pure growth.\n\nWhat stage are you at and what's your current ARR? I can give you a realistic valuation range.`
-      },
-      {
-        triggers: ['budget','forecast','financial model','projections'],
-        reply: `A solid financial model has three interconnected components:\n\n**1. Revenue model**\n• Bottom-up: build from sales capacity, conversion rates, deal sizes\n• Avoid top-down ("we'll capture 1% of a $10B market")\n\n**2. Cost structure**\n• Fixed vs variable costs\n• Headcount plan (usually 60–70% of opex)\n• COGS and gross margin targets\n\n**3. Cash flow bridge**\n• Ties P&L to actual cash timing\n• Accounts for payment terms, capex, debt service\n\n**Best practice:** Build three scenarios (base, upside, downside). Your downside should assume 30–40% revenue miss. Can you survive it? If not, adjust your cost structure now.\n\nWant help structuring a specific section of your model?`
-      }
-    ]
-  };
-
-  const FALLBACKS = {
-    cfo: [
-      "That's a nuanced question. In corporate finance, context is everything — the right answer depends on your stage, business model, and capital structure. Could you share a bit more detail so I can give you a precise analysis?",
-      "Good question. From a CFO perspective, I'd approach this by first understanding your current financial position, then stress-testing assumptions. What specific numbers are you working with?",
-      "This touches on several financial levers simultaneously. The short answer is: it depends on your burn multiple and unit economics. Walk me through your current metrics and I'll give you a concrete recommendation.",
-      "In my experience advising finance teams, this question usually comes down to timing and capital efficiency. What's driving the question — a board meeting, a fundraise, or an operational decision?",
-      "Solid question. The CFO lens here is: what's the risk-adjusted return on this decision? Let me know more about your situation and I'll model it out for you."
-    ]
-  };
-
-  let isTyping = false;
-
-  function getResponse(input) {
-    const lower = input.toLowerCase();
-    const pool = RESPONSES[CONTEXT] || [];
-    for (const item of pool) {
-      if (item.triggers.some(t => lower.includes(t))) {
-        return item.reply;
-      }
-    }
-    const fallbacks = FALLBACKS[CONTEXT];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-  }
-
-  function formatMessage(text) {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n/g, '<br>');
-  }
-
-  function appendMessage(role, text) {
-    const messages = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-    div.className = `msg ${role}`;
-    const avatar = role === 'ai' ? '💼' : '👤';
-    div.innerHTML = `
-      <div class="msg-avatar">${avatar}</div>
-      <div class="msg-bubble">${formatMessage(text)}</div>
-    `;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  }
-
-  function showTyping() {
-    const messages = document.getElementById('chatMessages');
-    const div = document.createElement('div');
-    div.className = 'msg ai';
-    div.id = 'typingIndicator';
-    div.innerHTML = `
-      <div class="msg-avatar">💼</div>
-      <div class="msg-bubble">
-        <div class="typing-indicator">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-    `;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  }
-
-  function removeTyping() {
-    const el = document.getElementById('typingIndicator');
-    if (el) el.remove();
-  }
-
-  function hideSuggestions() {
-    const s = document.getElementById('suggestions');
-    if (s) s.style.display = 'none';
-  }
-
-  function sendMessage() {
-    if (isTyping) return;
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
-    if (!text) return;
-
-    hideSuggestions();
-    appendMessage('user', text);
-    input.value = '';
-    input.style.height = 'auto';
-
-    isTyping = true;
-    showTyping();
-
-    const delay = 900 + Math.random() * 800;
-    setTimeout(() => {
-      removeTyping();
-      const reply = getResponse(text);
-      appendMessage('ai', reply);
-      isTyping = false;
-    }, delay);
-  }
-
-  function sendSuggestion(btn) {
-    const text = btn.textContent;
-    document.getElementById('chatInput').value = text;
-    sendMessage();
-  }
-
-  function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }
-
-  function autoResize(el) {
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-  }
-</script>
 <script>
 (function() {
   const WORKER_URL = '/.netlify/functions/openai-proxy';
@@ -463,7 +313,7 @@
     appendMessage('user', userText);
     messageHistory.push({ role: 'user', content: userText });
 
-    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">▋</span>');
+    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">â</span>');
 
     try {
       const response = await fetch(WORKER_URL, {
