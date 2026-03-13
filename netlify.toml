@@ -1,0 +1,4 @@
+[build]
+  base    = "alhash-ai"
+  publish = "."
+  functions = "netlify/functions"
