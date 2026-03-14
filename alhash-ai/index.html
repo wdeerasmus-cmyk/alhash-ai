@@ -596,7 +596,7 @@
       if (!res.ok) throw new Error('Server error: ' + res.status);
       const contentType = res.headers.get('content-type') || '';
       if (contentType.includes('text/event-stream')) {
-        // SSE streaming response
+        // SSE streaming response (v2)
         typing.remove();
         const botMsg = addMsg('', 'bot');
         const reader = res.body.getReader();
