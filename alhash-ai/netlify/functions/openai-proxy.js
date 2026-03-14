@@ -37,8 +37,24 @@ exports.handler = async function(event, context) {
     };
   }
 
-  const botType = requestBody.botType || 'cfo';
-  const messages = requestBody.messages || [];
+  // Support both payload formats:
+  // Frontend sends: { message, service, history }
+  // Legacy format:  { messages, botType }
+  const botType = requestBody.botType || requestBody.service || 'cfo';
+  let openaiMessages;
+
+  if (requestBody.messages) {
+    // Legacy format
+    openaiMessages = requestBody.messages;
+  } else {
+    // Frontend format: build messages from history + current message
+    const history = requestBody.history || [];
+    const userMessage = requestBody.message || '';
+    openaiMessages = [
+      ...history,
+      { role: 'user', content: userMessage }
+    ];
+  }
 
   const systemPrompts = {
     cfo: `You are the Alhash AI CFO — a sharp, direct corporate finance intelligence engine built for founders, finance teams, and operators.
@@ -79,17 +95,17 @@ RULES (follow in strict order):
 
   const systemPrompt = systemPrompts[botType] || systemPrompts.cfo;
 
-  const openaiMessages = [
+  const finalMessages = [
     { role: 'system', content: systemPrompt },
-    ...messages
+    ...openaiMessages
   ];
 
   const postData = JSON.stringify({
     model: 'gpt-4o',
-    messages: openaiMessages,
+    messages: finalMessages,
     max_tokens: 1000,
     temperature: 0.7,
-    stream: false
+    stream: true
   });
 
   return new Promise((resolve) => {
@@ -104,40 +120,24 @@ RULES (follow in strict order):
       }
     };
 
-    let responseData = '';
+    let streamBody = '';
 
     const req = https.request(options, (res) => {
       res.on('data', (chunk) => {
-        responseData += chunk;
+        streamBody += chunk.toString();
       });
 
       res.on('end', () => {
-        try {
-          const parsed = JSON.parse(responseData);
-          if (parsed.error) {
-            resolve({
-              statusCode: 500,
-              headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
-              body: JSON.stringify({ error: parsed.error.message })
-            });
-            return;
-          }
-          const content = parsed.choices[0].message.content;
-          resolve({
-            statusCode: 200,
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ content: content })
-          });
-        } catch (e) {
-          resolve({
-            statusCode: 500,
-            headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
-            body: JSON.stringify({ error: 'Failed to parse OpenAI response' })
-          });
-        }
+        resolve({
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no'
+          },
+          body: streamBody
+        });
       });
     });
 
