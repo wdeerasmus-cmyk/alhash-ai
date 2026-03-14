@@ -2,3 +2,6 @@
   base    = "alhash-ai"
   publish = "."
   functions = "netlify/functions"
+
+[functions]
+  timeout = 26
