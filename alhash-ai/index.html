@@ -594,39 +594,11 @@
         body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) })
       });
       if (!res.ok) throw new Error('Server error: ' + res.status);
-      const contentType = res.headers.get('content-type') || '';
-      if (contentType.includes('text/event-stream')) {
-        // SSE streaming response (v2)
-        typing.remove();
-        const botMsg = addMsg('', 'bot');
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let fullText = '';
-        let buffer = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop();
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              const raw = line.slice(6).trim();
-              if (raw === '[DONE]') continue;
-              try {
-                const parsed = JSON.parse(raw);
-                const delta = parsed.choices?.[0]?.delta?.content || '';
-                if (delta) {
-                  fullText += delta;
-                  botMsg.textContent = fullText;
-                  messages.scrollTop = messages.scrollHeight;
-                }
-              } catch (_) {}
-            }
-          }
-        }
-        if (!fullText) botMsg.textContent = 'Sorry, something went wrong.';
-        chatHistory.push({ role: 'assistant', content: fullText });
+      const data = await res.json();
+      const fullText = data.message || 'Sorry, something went wrong.';
+      typing.remove();
+      addMsg(fullText, 'bot');
+      chatHistory.push({ role: 'assistant', content: fullText });
       } else {
         // JSON response fallback
         const data = await res.json();
