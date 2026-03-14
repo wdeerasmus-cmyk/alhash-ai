@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI CFO âÂÂ Alhash AI</title>
+  <title>AI CFO Ã¢ÂÂÃÂÃÂ Alhash AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -213,15 +213,15 @@
 
 <div class="page-wrapper">
   <div class="chat-hero">
-    <div class="badge">âÂÂ¡ AI-Powered</div>
+    <div class="badge">Ã¢ÂÂÃÂÃÂ¡ AI-Powered</div>
     <h1>Your <span class="accent">AI CFO</span></h1>
-    <p>Corporate finance intelligence âÂÂ runway, liquidity, burn rate, and strategic capital decisions.</p>
+    <p>Corporate finance intelligence Ã¢ÂÂÃÂÃÂ runway, liquidity, burn rate, and strategic capital decisions.</p>
   </div>
 
   <div class="chat-outer">
     <div class="chat-container">
       <div class="chat-header">
-        <div class="chat-avatar">Ã°ÂÂÂ¼</div>
+        <div class="chat-avatar">ÃÂ°ÃÂÃÂÃÂ¼</div>
         <div class="chat-header-info">
           <h3>Alhash AI CFO</h3>
           <p>Corporate Finance Intelligence</p>
@@ -231,9 +231,9 @@
 
       <div class="chat-messages" id="chatMessages">
         <div class="msg ai">
-          <div class="msg-avatar">Ã°ÂÂÂ¼</div>
+          <div class="msg-avatar">ÃÂ°ÃÂÃÂÃÂ¼</div>
           <div class="msg-bubble">
-            Hello. I'm your AI CFO âÂÂ built for founders, finance teams, and operators who need sharp financial thinking without the overhead.<br><br>
+            Hello. I'm your AI CFO Ã¢ÂÂÃÂÃÂ built for founders, finance teams, and operators who need sharp financial thinking without the overhead.<br><br>
             I can help with burn rate analysis, runway modelling, liquidity planning, fundraising strategy, and capital allocation. What's on your financial agenda today?
           </div>
         </div>
@@ -260,16 +260,16 @@
             <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </button>
         </div>
-        <p class="input-hint">AI responses are for informational purposes only âÂÂ not financial advice.</p>
+        <p class="input-hint">AI responses are for informational purposes only Ã¢ÂÂÃÂÃÂ not financial advice.</p>
       </div>
     </div>
   </div>
 </div>
 
 <footer>
-  <p>Â© 2026 Alhash Investments LLC-FZ Â· License #2541437.01 Â· Meydan Free Zone, Dubai, UAE</p>
+  <p>ÃÂ© 2026 Alhash Investments LLC-FZ ÃÂ· License #2541437.01 ÃÂ· Meydan Free Zone, Dubai, UAE</p>
   <p style="margin-top:0.5rem;">
-    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> Â·
+    <a href="mailto:hello@alhash.ai">hello@alhash.ai</a> ÃÂ·
     <a href="https://alhash.ai">alhash.ai</a>
   </p>
 </footer>
@@ -313,7 +313,7 @@
     appendMessage('user', userText);
     messageHistory.push({ role: 'user', content: userText });
 
-    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">â</span>');
+    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">Ã¢ÂÂ</span>');
 
     try {
       const response = await fetch(WORKER_URL, {
@@ -332,42 +332,15 @@
         return;
       }
 
-            const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = '';
-      let buffer = '';
+            const data = await response.json();
+      const fullText = data.message || '';
       aiBubble.innerHTML = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop(); // keep incomplete last line in buffer
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6).trim();
-            if (data === '[DONE]') break;
-            try {
-              const parsed = JSON.parse(data);
-              const tok = parsed.choices?.[0]?.delta?.content || '';
-              if (tok) {
-                fullText += tok;
-                aiBubble.innerHTML = fullText.replace(/\n/g, '<br>');
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-              }
-            } catch (e) {
-              // skip malformed chunks
-            }
-          }
-        }
-      }
 
       if (!fullText) {
         aiBubble.innerHTML = '<em>No response received.</em>';
       } else {
+        aiBubble.innerHTML = fullText.replace(/\n/g, '<br>');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
         messageHistory.push({ role: 'assistant', content: fullText });
       }
 
