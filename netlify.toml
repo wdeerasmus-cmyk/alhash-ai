@@ -1,7 +1,4 @@
 [build]
-  base    = "alhash-ai"
-  publish = "."
+  base      = "alhash-ai"
+  publish   = "."
   functions = "netlify/functions"
-
-[functions]
-  timeout = 26
