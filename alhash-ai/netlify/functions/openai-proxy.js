@@ -100,12 +100,13 @@ RULES (follow in strict order):
     ...openaiMessages
   ];
 
+  // stream: false — returns a single clean JSON response, avoids Netlify 10s timeout
   const postData = JSON.stringify({
     model: 'gpt-4o',
     messages: finalMessages,
     max_tokens: 1000,
     temperature: 0.7,
-    stream: true
+    stream: false
   });
 
   return new Promise((resolve) => {
@@ -120,24 +121,35 @@ RULES (follow in strict order):
       }
     };
 
-    let streamBody = '';
+    let responseBody = '';
 
     const req = https.request(options, (res) => {
       res.on('data', (chunk) => {
-        streamBody += chunk.toString();
+        responseBody += chunk.toString();
       });
 
       res.on('end', () => {
-        resolve({
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'X-Accel-Buffering': 'no'
-          },
-          body: streamBody
-        });
+        try {
+          const parsed = JSON.parse(responseBody);
+          const message = parsed.choices && parsed.choices[0] && parsed.choices[0].message
+            ? parsed.choices[0].message.content
+            : 'Sorry, I could not generate a response.';
+
+          resolve({
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
+          });
+        } catch (e) {
+          resolve({
+            statusCode: 500,
+            headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: 'Failed to parse OpenAI response', raw: responseBody.substring(0, 200) })
+          });
+        }
       });
     });
 
