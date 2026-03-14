@@ -313,7 +313,7 @@
     appendMessage('user', userText);
     messageHistory.push({ role: 'user', content: userText });
 
-    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">—</span>');
+    const aiBubble = appendMessage('assistant', '<span class="typing-indicator">—</span>');
 
     try {
       const response = await fetch(WORKER_URL, {
@@ -327,27 +327,58 @@
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        aiBubble.innerHTML = `<em>Error: ${err.error || 'Request failed.'}</em>`;
+        const errText = await response.text();
+        aiBubble.innerHTML = '<em>Error: Request failed (' + response.status + ')</em>';
         return;
       }
 
-      const data = await response.json();
-      const fullText = data.message || '';
-      aiBubble.innerHTML = fullText.replace(/\n/g, '<br>');
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      aiBubble.innerHTML = '';
 
-      messageHistory.push({ role: 'assistant', content: fullText });
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('
+');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') break;
+            try {
+              const parsed = JSON.parse(data);
+              const token = parsed.choices?.[0]?.delta?.content || '';
+              if (token) {
+                fullText += token;
+                aiBubble.innerHTML = fullText.replace(/
+/g, '<br>');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+              }
+            } catch (e) {
+              // skip malformed chunks
+            }
+          }
+        }
+      }
+
+      if (!fullText) {
+        aiBubble.innerHTML = '<em>No response received.</em>';
+      } else {
+        messageHistory.push({ role: 'assistant', content: fullText });
+      }
 
     } catch (err) {
-      aiBubble.innerHTML = `<em>Error: ${err.message}</em>`;
+      aiBubble.innerHTML = '<em>Error: ' + err.message + '</em>';
     } finally {
       sendBtn.disabled = false;
       chatInput.disabled = false;
       chatInput.focus();
     }
   }
-
   sendBtn.addEventListener('click', sendMessage);
   chatInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
