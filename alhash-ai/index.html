@@ -1,8 +1,611 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alhash Investments – AI-Powered Investment Intelligence</title>
-  <meta property="og:title" content="Alhash Investments – AI-Powered Investment Intelligence" />
-  <!-- rest of file unchanged -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Alhash Investments – The Future of Finance is Intelligent</title>
+<meta name="description" content="AI-powered investment advisory, personal finance, and business intelligence tools – built for UAE entrepreneurs and investors. Licensed in Dubai, Meydan Free Zone."/>
+<meta property="og:title" content="Alhash Investments – The Future of Finance is Intelligent"/>
+<meta property="og:description" content="AI-powered financial tools for UAE entrepreneurs and investors. Licensed in Dubai, Meydan Free Zone."/>
+<meta property="og:type" content="website"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #050d1f;
+    --navy2: #080f20;
+    --navy3: #0d1a35;
+    --blue: #2563eb;
+    --blue-light: #60a5fa;
+    --gold: #f59e0b;
+    --gold-light: #fbbf24;
+    --white: #ffffff;
+    --grey: #94a3b8;
+    --grey2: #64748b;
+    --card: rgba(255,255,255,0.035);
+    --border: rgba(255,255,255,0.07);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 6%; height: 70px;
+    background: rgba(5,13,31,0.88); backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -0.5px; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--grey); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta { background: var(--gold); color: #000; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: background 0.2s, transform 0.15s; white-space: nowrap; }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 120px 6% 80px; position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 65% 45%, rgba(37,99,235,0.16) 0%, transparent 70%),
+      radial-gradient(ellipse 45% 35% at 15% 75%, rgba(245,158,11,0.07) 0%, transparent 60%),
+      var(--navy);
+  }
+  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.28);
+    color: var(--blue-light); padding: 0.3rem 0.85rem; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .hero h1 { font-size: clamp(2.2rem, 4.5vw, 3.75rem); font-weight: 900; line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 1.25rem; }
+  .hero h1 em { font-style: normal; color: var(--blue-light); }
+  .hero-sub { font-size: 1.05rem; color: var(--grey); margin-bottom: 2rem; max-width: 460px; line-height: 1.75; }
+  .hero-btns { display: flex; gap: 0.875rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .btn-primary { background: var(--blue); color: #fff; padding: 0.75rem 1.6rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: background 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 0.35rem; }
+  .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--white); padding: 0.75rem 1.6rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; border: 1.5px solid rgba(255,255,255,0.2); transition: border-color 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 0.35rem; }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.5); transform: translateY(-1px); }
+  .trust-bar { display: flex; gap: 1.25rem; flex-wrap: wrap; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .trust-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--grey); font-weight: 500; }
+
+  /* Dashboard visual */
+  .hero-visual { position: relative; }
+  .dash-wrap {
+    background: rgba(13,26,53,0.95); border: 1px solid rgba(37,99,235,0.22);
+    border-radius: 20px; padding: 1.5rem;
+    box-shadow: 0 0 80px rgba(37,99,235,0.12), 0 30px 80px rgba(0,0,0,0.5);
+    backdrop-filter: blur(20px);
+  }
+  .dash-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; }
+  .dash-label { font-size: 0.7rem; color: var(--grey); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+  .dash-val { font-size: 2rem; font-weight: 900; letter-spacing: -1px; }
+  .dash-up { color: #10b981; font-size: 0.85rem; font-weight: 700; background: rgba(16,185,129,0.1); padding: 0.2rem 0.5rem; border-radius: 6px; }
+  .dash-chart { height: 72px; display: flex; align-items: flex-end; gap: 3px; margin-bottom: 1.25rem; background: rgba(37,99,235,0.05); border-radius: 10px; padding: 0.5rem; }
+  .bar { flex: 1; border-radius: 3px 3px 0 0; background: linear-gradient(to top, #2563eb, #60a5fa); opacity: 0.65; transition: opacity 0.2s; }
+  .bar:hover { opacity: 1; }
+  .dash-rows { display: flex; flex-direction: column; gap: 0.5rem; }
+  .dash-row { display: flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 0.5rem 0.75rem; }
+  .dash-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-b { background: var(--blue-light); }
+  .dot-g { background: #10b981; }
+  .dot-o { background: var(--gold); }
+  .dash-row span { font-size: 0.78rem; color: var(--grey); }
+  .dash-row strong { font-size: 0.78rem; color: var(--white); margin-left: auto; }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 6%; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+  .section-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 2.5px; color: var(--blue-light); text-transform: uppercase; margin-bottom: 0.6rem; }
+  .section-title { font-size: clamp(1.75rem, 3vw, 2.6rem); font-weight: 900; letter-spacing: -0.75px; margin-bottom: 0.875rem; }
+  .section-sub { color: var(--grey); font-size: 1rem; max-width: 540px; line-height: 1.75; }
+
+  /* ── SERVICES ── */
+  .services { background: var(--navy2); }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.25rem; margin-top: 3rem; }
+
+  .svc-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.75rem; position: relative; overflow: hidden;
+    transition: border-color 0.3s, transform 0.25s;
+    display: block; text-decoration: none; color: inherit;
+  }
+  .svc-card:hover { border-color: rgba(37,99,235,0.35); transform: translateY(-4px); }
+  .svc-card.dim { opacity: 0.65; pointer-events: none; }
+  .svc-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1.1rem; }
+  .ic-b { background: rgba(37,99,235,0.14); }
+  .ic-g { background: rgba(16,185,129,0.14); }
+  .ic-p { background: rgba(139,92,246,0.14); }
+  .ic-o { background: rgba(245,158,11,0.14); }
+  .ic-pk { background: rgba(236,72,153,0.14); }
+  .svc-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .svc-card p { color: var(--grey); font-size: 0.875rem; line-height: 1.65; margin-bottom: 1.1rem; }
+  .svc-link { color: var(--blue-light); font-size: 0.85rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: color 0.2s; }
+  .svc-link:hover { color: var(--white); }
+  .cs-badge {
+    position: absolute; top: 1rem; right: 1rem;
+    background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.28);
+    color: var(--gold); font-size: 0.65rem; font-weight: 800;
+    padding: 0.18rem 0.55rem; border-radius: 100px; letter-spacing: 0.75px; text-transform: uppercase;
+  }
+
+  /* ── WHY ── */
+  .why { background: var(--navy); }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; margin-top: 3rem; }
+  .why-points { display: flex; flex-direction: column; gap: 1.75rem; }
+  .why-pt { display: flex; gap: 1rem; }
+  .why-num {
+    width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+    background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.22);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 900; color: var(--blue-light);
+  }
+  .why-pt h4 { font-size: 0.95rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .why-pt p { color: var(--grey); font-size: 0.85rem; line-height: 1.65; }
+  .why-visual { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; margin-bottom: 1rem; }
+  .stat-box { background: rgba(37,99,235,0.07); border: 1px solid rgba(37,99,235,0.14); border-radius: 12px; padding: 1.1rem; text-align: center; }
+  .stat-box .n { font-size: 1.6rem; font-weight: 900; color: var(--blue-light); }
+  .stat-box .l { font-size: 0.7rem; color: var(--grey); margin-top: 0.15rem; }
+  .stat-box.gold { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.14); }
+  .stat-box.gold .n { color: var(--gold); }
+  .ai-box { background: rgba(37,99,235,0.05); border: 1px solid rgba(37,99,235,0.12); border-radius: 12px; padding: 1rem 1.1rem; }
+  .ai-box .ai-lbl { font-size: 0.68rem; color: var(--blue-light); font-weight: 800; text-transform: uppercase; letter-spacing: 0.75px; margin-bottom: 0.4rem; }
+  .ai-box p { font-size: 0.82rem; color: var(--grey); line-height: 1.6; }
+
+  /* ── ABOUT ── */
+  .about { background: var(--navy2); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; margin-top: 3rem; }
+  .about-text p { color: var(--grey); font-size: 0.9rem; line-height: 1.8; margin-bottom: 0.875rem; }
+  .license-card { background: rgba(37,99,235,0.05); border: 1px solid rgba(37,99,235,0.18); border-radius: 14px; padding: 1.5rem; margin-top: 1.75rem; }
+  .license-card .lc-head { font-size: 0.7rem; color: var(--blue-light); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+  .lc-row { display: flex; justify-content: space-between; align-items: center; padding: 0.45rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .lc-row:last-child { border-bottom: none; }
+  .lc-row .lk { color: var(--grey); }
+  .lc-row .lv { font-weight: 700; color: var(--white); }
+  .about-panel { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; }
+  .about-panel .ap-logo { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 0.25rem; }
+  .about-panel .ap-logo span { color: var(--gold); }
+  .about-panel .ap-sub { color: var(--grey); font-size: 0.85rem; margin-bottom: 2rem; }
+  .ap-tags { display: flex; flex-direction: column; gap: 0.6rem; }
+  .ap-tag { display: flex; align-items: center; gap: 0.6rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 0.65rem 0.875rem; font-size: 0.82rem; color: var(--grey); }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(245,158,11,0.06) 100%);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    text-align: center; padding: 100px 6%;
+  }
+  .cta-section h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 0.875rem; letter-spacing: -0.5px; }
+  .cta-section p { color: var(--grey); font-size: 1rem; margin-bottom: 2rem; }
+  .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .cta-note { margin-top: 1.75rem; font-size: 0.8rem; color: var(--grey2); }
+  .cta-note a { color: var(--blue-light); text-decoration: none; }
+
+  /* ── FOOTER ── */
+  footer { background: var(--navy); padding: 60px 6% 28px; border-top: 1px solid var(--border); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; max-width: 1200px; margin-left: auto; margin-right: auto; }
+  .footer-brand .fb-logo { font-size: 1.1rem; font-weight: 900; margin-bottom: 0.6rem; }
+  .footer-brand .fb-logo span { color: var(--gold); }
+  .footer-brand p { color: var(--grey); font-size: 0.82rem; line-height: 1.7; max-width: 260px; }
+  .footer-brand .fb-lic { margin-top: 0.75rem; font-size: 0.72rem; color: var(--grey2); }
+  .footer-col h4 { font-size: 0.8rem; font-weight: 800; margin-bottom: 0.875rem; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; }
+  .footer-col a { color: var(--grey); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--white); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 1.75rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--grey2); max-width: 1200px; margin: 0 auto; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .why-grid, .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    nav .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .hero-btns { flex-direction: column; }
+    .cta-btns { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+<a href="#" class="nav-logo">ALHASH <span>INVESTMENTS</span></a>
+<ul class="nav-links">
+  <li><a href="#services">Services</a></li>
+  <li><a href="#why">Why Us</a></li>
+  <li><a href="#about">About</a></li>
+  <li><a href="#contact">Contact</a></li>
+</ul>
+<a href="mailto:hello@alhashinvestments.com" class="nav-cta">Book a Demo →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-bg"></div>
+<div class="hero-grid">
+  <div class="hero-content">
+    <div class="hero-badge">🇦🇪 UAE Licensed · Meydan Free Zone, Dubai</div>
+    <h1>The Future of Finance<br/>is <em>Intelligent.</em></h1>
+    <p class="hero-sub">AI-powered investment advisory, personal finance automation, and smart business intelligence — built for UAE entrepreneurs and investors.</p>
+    <div class="hero-btns">
+      <a href="#services" class="btn-primary">Explore Services →</a>
+      <a href="mailto:hello@alhashinvestments.com" class="btn-ghost">Book a Free Demo</a>
+    </div>
+    <div class="trust-bar">
+      <div class="trust-item">🇦🇪 UAE Licensed</div>
+      <div class="trust-item">🏢 Meydan Free Zone</div>
+      <div class="trust-item">🔒 Secure & Compliant</div>
+      <div class="trust-item">🤖 AI-First Platform</div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="dash-wrap">
+      <div class="dash-top">
+        <div>
+          <div class="dash-label">Portfolio Value</div>
+          <div class="dash-val">$265,200</div>
+        </div>
+        <div class="dash-up">▲ +12.8%</div>
+      </div>
+      <div class="dash-chart">
+        <div class="bar" style="height:38%"></div>
+        <div class="bar" style="height:52%"></div>
+        <div class="bar" style="height:44%"></div>
+        <div class="bar" style="height:68%"></div>
+        <div class="bar" style="height:58%"></div>
+        <div class="bar" style="height:78%"></div>
+        <div class="bar" style="height:63%"></div>
+        <div class="bar" style="height:88%"></div>
+        <div class="bar" style="height:72%"></div>
+        <div class="bar" style="height:100%"></div>
+      </div>
+      <div class="dash-rows">
+        <div class="dash-row"><div class="dash-dot dot-b"></div><span>AI Insight: Rebalance to reduce risk exposure</span></div>
+        <div class="dash-row"><div class="dash-dot dot-g"></div><span>Opportunity: Healthcare sector showing strong signals</span></div>
+        <div class="dash-row"><div class="dash-dot dot-o"></div><span>Alert: AED/USD rate favourable for conversion</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+<div class="section-inner">
+  <div class="section-label">What We Offer</div>
+  <div class="section-title">Five Ways AI Transforms Your Finances</div>
+  <p class="section-sub">From personal investing to business finance — our AI-powered suite covers every financial need for UAE entrepreneurs and investors.</p>
+  <div class="services-grid">
+
+    <a href="ai-advisory.html" class="svc-card">
+      <div class="svc-icon ic-b">📊</div>
+      <h3>AI Investment Advisory</h3>
+      <p>Institutional-grade portfolio analysis powered by AI. Get personalised investment strategies, real-time market signals, and risk-adjusted recommendations — tailored to UAE and global markets.</p>
+      <span class="svc-link">Get Started →</span>
+    </a>
+
+    <a href="personal-finance.html" class="svc-card">
+      <div class="svc-icon ic-g">📱</div>
+      <h3>Personal Finance App</h3>
+      <p>Your AI-powered financial co-pilot. Track spending, automate savings, and get intelligent insights that help you build wealth — all from one beautifully simple app.</p>
+      <span class="svc-link">Learn More →</span>
+    </a>
+
+    <div class="svc-card dim">
+      <div class="cs-badge">Coming Soon</div>
+      <div class="svc-icon ic-p">₿</div>
+      <h3>Crypto Platform</h3>
+      <p>Trade, manage, and grow your crypto portfolio with AI-driven signals and automated strategies. Built for the UAE market with full regulatory compliance.</p>
+      <span class="svc-link">Join Waitlist →</span>
+    </div>
+
+    <a href="ai-cfo.html" class="svc-card">
+      <div class="svc-icon ic-o">🏢</div>
+      <h3>AI CFO for SMEs</h3>
+      <p>Give your business the financial intelligence of a Fortune 500 CFO — at a fraction of the cost. Cash flow forecasting, expense optimisation, and strategic financial planning powered by AI.</p>
+      <span class="svc-link">Book a Demo →</span>
+    </a>
+
+    <div class="svc-card dim">
+      <div class="cs-badge">Coming Soon</div>
+      <div class="svc-icon ic-pk">📈</div>
+      <h3>Copy Trading</h3>
+      <p>Automatically mirror the trades of top-performing investors. Our AI curates and ranks the best traders so you can invest with confidence — even as a beginner.</p>
+      <span class="svc-link">Join Waitlist →</span>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<!-- WHY -->
+<section class="why" id="why">
+<div class="section-inner">
+  <div class="section-label">Why Alhash AI</div>
+  <div class="section-title">Built for the UAE. Powered by AI.</div>
+  <div class="why-grid">
+    <div class="why-points">
+      <div class="why-pt">
+        <div class="why-num">01</div>
+        <div>
+          <h4>UAE-Licensed & Compliant</h4>
+          <p>Fully licensed under Meydan Free Zone (License #2541437.01). We operate with full legal transparency in the UAE financial ecosystem.</p>
+        </div>
+      </div>
+      <div class="why-pt">
+        <div class="why-num">02</div>
+        <div>
+          <h4>AI-First, Not AI-Washed</h4>
+          <p>Every product is built on real AI infrastructure — not just a chatbot on top of a spreadsheet. Genuine machine learning, real-time data, actionable intelligence.</p>
+        </div>
+      </div>
+      <div class="why-pt">
+        <div class="why-num">03</div>
+        <div>
+          <h4>Built for Expats & Entrepreneurs</h4>
+          <p>We understand the unique financial challenges of living and building in the UAE — multi-currency, cross-border investing, and SME cash flow complexity.</p>
+        </div>
+      </div>
+      <div class="why-pt">
+        <div class="why-num">04</div>
+        <div>
+          <h4>One Platform, Five Solutions</h4>
+          <p>From personal finance to business intelligence to crypto — everything under one roof, with a unified AI layer that learns your financial behaviour over time.</p>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual">
+      <div class="stat-grid">
+        <div class="stat-box"><div class="n">5+</div><div class="l">AI-Powered Services</div></div>
+        <div class="stat-box gold"><div class="n">UAE</div><div class="l">Licensed & Compliant</div></div>
+        <div class="stat-box"><div class="n">24/7</div><div class="l">AI Monitoring</div></div>
+        <div class="stat-box"><div class="n">AED</div><div class="l">Multi-Currency</div></div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-lbl">🤖 AI Insight Engine</div>
+        <p>Real-time portfolio analysis, risk scoring, and personalised recommendations — updated continuously as markets move and your financial profile evolves.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+<div class="section-inner">
+  <div class="about-grid">
+    <div class="about-text">
+      <div class="section-label">About Us</div>
+      <div class="section-title">Alhash Investments LLC-FZ</div>
+      <p>We are a Dubai-based AI and financial technology company on a mission to democratise access to intelligent financial tools for UAE residents, expats, and entrepreneurs.</p>
+      <p>Founded and licensed in the Meydan Free Zone, we combine deep financial expertise with cutting-edge artificial intelligence to build products that were previously only available to institutional investors.</p>
+      <p>Our vision: every person and business in the UAE should have access to the same quality of financial intelligence as the world's top investment firms.</p>
+      <div class="license-card">
+        <div class="lc-head">📄 Legal & Licensing</div>
+        <div class="lc-row"><span class="lk">Legal Entity</span><span class="lv">Alhash Investments LLC-FZ</span></div>
+        <div class="lc-row"><span class="lk">License Number</span><span class="lv">#2541437.01</span></div>
+        <div class="lc-row"><span class="lk">Activity Code</span><span class="lv">6499.02</span></div>
+        <div class="lc-row"><span class="lk">Free Zone</span><span class="lv">Meydan Free Zone, Dubai</span></div>
+        <div class="lc-row"><span class="lk">Address</span><span class="lv">Meydan Grandstand, 6th Floor, Dubai</span></div>
+        <div class="lc-row"><span class="lk">Issue Date</span><span class="lv">30 November 2025</span></div>
+        <div class="lc-row"><span class="lk">Valid Until</span><span class="lv">29 November 2026</span></div>
+        <div class="lc-row"><span class="lk">Jurisdiction</span><span class="lv">United Arab Emirates</span></div>
+      </div>
+    </div>
+    <div class="about-panel">
+      <div class="ap-logo">ALHASH <span>INVESTMENTS</span></div>
+      <div class="ap-sub">Intelligent Finance for the UAE</div>
+      <div class="ap-tags">
+        <div class="ap-tag">🇦🇪 &nbsp;Proudly built in Dubai, UAE</div>
+        <div class="ap-tag">🏢 &nbsp;Meydan Free Zone Licensed</div>
+        <div class="ap-tag">🔒 &nbsp;Secure, Compliant & Transparent</div>
+        <div class="ap-tag">🤖 &nbsp;AI-First Financial Platform</div>
+        <div class="ap-tag">📈 &nbsp;Own-Account Investment Activities</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+<div class="section-label" style="text-align:center;">Get Started</div>
+<h2>Ready to Make Your Money Work Smarter?</h2>
+<p>Book a free 30-minute demo and see how Alhash AI can transform your financial future.</p>
+<div class="cta-btns">
+  <a href="mailto:hello@alhashinvestments.com" class="btn-primary">Book a Free Demo →</a>
+  <a href="mailto:hello@alhashinvestments.com" class="btn-ghost">Contact Us</a>
+</div>
+<p class="cta-note">Or email us directly: <a href="mailto:hello@alhashinvestments.com">hello@alhashinvestments.com</a></p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<div class="footer-grid">
+  <div class="footer-brand">
+    <div class="fb-logo">ALHASH <span>INVESTMENTS</span></div>
+    <p>AI-powered financial tools for UAE entrepreneurs and investors. Licensed in Dubai, Meydan Free Zone.</p>
+    <div class="fb-lic">Alhash Investments LLC-FZ · License #2541437.01 · Meydan Free Zone, Dubai, UAE</div>
+  </div>
+  <div class="footer-col">
+    <h4>Services</h4>
+    <ul>
+      <li><a href="ai-advisory.html">AI Investment Advisory</a></li>
+      <li><a href="personal-finance.html">Personal Finance App</a></li>
+      <li><a href="ai-cfo.html">AI CFO for SMEs</a></li>
+      <li><a href="#services">Crypto Platform</a></li>
+      <li><a href="#services">Copy Trading</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Company</h4>
+    <ul>
+      <li><a href="#about">About Us</a></li>
+      <li><a href="#why">Why Alhash AI</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Legal</h4>
+    <ul>
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Terms of Service</a></li>
+      <li><a href="#">Disclaimer</a></li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© 2026 Alhash Investments LLC-FZ. All rights reserved.</span>
+  <span>🇦🇪 Dubai, United Arab Emirates</span>
+</div>
+</footer>
+
+
+<!-- AI CHAT WIDGET -->
+<style>
+#chat-fab {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #f59e0b);
+  border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(37,99,235,0.45);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s;
+}
+#chat-fab:hover { transform: scale(1.08); }
+#chat-fab svg { width: 26px; height: 26px; fill: #fff; }
+#chat-box {
+  display: none; position: fixed; bottom: 100px; right: 28px; z-index: 9998;
+  width: 360px; max-width: calc(100vw - 40px);
+  background: #0d1a35; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  font-family: 'Inter', sans-serif; overflow: hidden;
+}
+#chat-box.open { display: flex; flex-direction: column; }
+#chat-header {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+}
+#chat-header .dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; }
+#chat-header span { color: #fff; font-weight: 700; font-size: 0.9rem; }
+#chat-header small { color: rgba(255,255,255,0.7); font-size: 0.75rem; margin-left: auto; }
+#chat-messages {
+  flex: 1; overflow-y: auto; padding: 16px; max-height: 320px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; line-height: 1.5; }
+.msg.bot { background: rgba(255,255,255,0.07); color: #e2e8f0; align-self: flex-start; border-bottom-left-radius: 4px; }
+.msg.user { background: #2563eb; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+.msg.typing { color: #94a3b8; font-style: italic; }
+#chat-input-row {
+  display: flex; gap: 8px; padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+}
+#chat-input {
+  flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 9px 12px; color: #fff; font-size: 0.85rem;
+  outline: none; font-family: 'Inter', sans-serif;
+}
+#chat-input::placeholder { color: #64748b; }
+#chat-send {
+  background: #f59e0b; border: none; border-radius: 8px;
+  padding: 9px 14px; color: #000; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; transition: background 0.2s;
+}
+#chat-send:hover { background: #fbbf24; }
+#chat-disclaimer {
+  text-align: center; font-size: 0.7rem; color: #475569;
+  padding: 6px 14px 10px;
+}
+</style>
+
+<button id="chat-fab" title="Chat with Alhash AI">
+<svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z"/></svg>
+</button>
+
+<div id="chat-box">
+<div id="chat-header">
+  <div class="dot"></div>
+  <span>Alhash AI Assistant</span>
+  <small>Powered by GPT-4</small>
+</div>
+<div id="chat-messages">
+  <div class="msg bot">Hi! I'm your Alhash AI financial assistant. Ask me anything about investing, personal finance, or our services. 👋</div>
+</div>
+<div id="chat-input-row">
+  <input id="chat-input" type="text" placeholder="Ask a financial question..." maxlength="300" />
+  <button id="chat-send">Send</button>
+</div>
+<div id="chat-disclaimer">General info only – not personalised financial advice.</div>
+</div>
+
+<script>
+const fab = document.getElementById('chat-fab');
+const box = document.getElementById('chat-box');
+const input = document.getElementById('chat-input');
+const send = document.getElementById('chat-send');
+const messages = document.getElementById('chat-messages');
+
+fab.addEventListener('click', () => {
+  box.classList.toggle('open');
+  if (box.classList.contains('open')) input.focus();
+});
+
+function addMsg(text, type) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+  return div;
+}
+
+let chatHistory = [];
+
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  send.disabled = true;
+  addMsg(text, 'user');
+  chatHistory.push({ role: 'user', content: text });
+  const typing = addMsg('Thinking...', 'bot typing');
+  try {
+    const res = await fetch('/.netlify/functions/openai-proxy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) })
+    });
+    if (!res.ok) throw new Error('Server error: ' + res.status);
+    const data = await res.json();
+    const fullText = data.message || data.reply || 'Sorry, something went wrong.';
+    typing.remove();
+    addMsg(fullText, 'bot');
+    chatHistory.push({ role: 'assistant', content: fullText });
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+  } catch (e) {
+    typing.remove();
+    addMsg('Connection error. Please try again.', 'bot');
+    chatHistory.pop();
+  }
+  send.disabled = false;
+  input.focus();
+}
+
+send.addEventListener('click', sendMessage);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+</script>
+
+</body>
+</html>
